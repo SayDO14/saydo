@@ -1,0 +1,460 @@
+{
+  "name": "SayDo - Sync confirmed events, tasks & emails",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "saydo-sync",
+        "options": {}
+      },
+      "id": "n1",
+      "name": "Supabase Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "saydo-sync"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "s1",
+                    "leftValue": "={{ $json.body.table }}",
+                    "rightValue": "events",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "events"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "s2",
+                    "leftValue": "={{ $json.body.table }}",
+                    "rightValue": "tasks",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "tasks"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "s3",
+                    "leftValue": "={{ $json.body.table }}",
+                    "rightValue": "emails",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  },
+                  {
+                    "id": "s4",
+                    "leftValue": "={{ $json.body.record.status }}",
+                    "rightValue": "approved",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "emails (approved)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "n2",
+      "name": "Which table?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const r = $json.body.record;\nconst start = new Date(r.start_at);\nconst end = r.end_at ? new Date(r.end_at) : new Date(start.getTime() + 60 * 60 * 1000);\nconst people = (r.related_people || []).map(p => typeof p === 'string' ? p : (p.name || '')).filter(Boolean);\nconst parts = [];\nif (r.description) parts.push(r.description);\nif (people.length) parts.push('With: ' + people.join(', '));\nreturn [{ json: {\n  id: r.id,\n  summary: r.title,\n  start: start.toISOString(),\n  end: end.toISOString(),\n  timezone: r.timezone || 'Africa/Algiers',\n  location: r.location || '',\n  description: parts.join('\\n')\n}}];"
+      },
+      "id": "n3",
+      "name": "Prepare event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "primary",
+          "mode": "list",
+          "cachedResultName": "primary"
+        },
+        "start": "={{ $json.start }}",
+        "end": "={{ $json.end }}",
+        "additionalFields": {
+          "summary": "={{ $json.summary }}",
+          "description": "={{ $json.description }}",
+          "location": "={{ $json.location }}",
+          "timezone": "={{ $json.timezone }}"
+        }
+      },
+      "id": "n4",
+      "name": "Create Google Calendar event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        700,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "events",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Prepare event').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "google_event_id",
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": "synced_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "n5",
+      "name": "Mark event synced",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        940,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const r = $json.body.record;\nconst people = (r.related_people || []).map(p => typeof p === 'string' ? p : (p.name || '')).filter(Boolean);\nconst parts = [];\nif (r.notes) parts.push(r.notes);\nif (people.length) parts.push('With: ' + people.join(', '));\nreturn [{ json: {\n  id: r.id,\n  title: r.title,\n  notes: parts.join('\\n'),\n  due: r.due_at ? new Date(r.due_at).toISOString() : ''\n}}];"
+      },
+      "id": "n8",
+      "name": "Prepare task",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "task": "@default",
+        "title": "={{ $json.title }}",
+        "additionalFields": {
+          "notes": "={{ $json.notes }}",
+          "dueDate": "={{ $json.due || undefined }}"
+        }
+      },
+      "id": "n6",
+      "name": "Create Google Task",
+      "type": "n8n-nodes-base.googleTasks",
+      "typeVersion": 1,
+      "position": [
+        700,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "tasks",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Prepare task').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "google_task_id",
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": "synced_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "n7",
+      "name": "Mark task synced",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        940,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $json.body.record.to_email }}",
+        "subject": "={{ $json.body.record.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.body.record.body }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "n9",
+      "name": "Send Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        460,
+        540
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "emails",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Supabase Webhook').item.json.body.record.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "sent"
+            },
+            {
+              "fieldId": "gmail_message_id",
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": "sent_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "n10",
+      "name": "Mark email sent",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        700,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "emails",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Supabase Webhook').item.json.body.record.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "failed"
+            },
+            {
+              "fieldId": "error_message",
+              "fieldValue": "={{ String($json.error?.message ?? $json.error) }}"
+            }
+          ]
+        }
+      },
+      "id": "n11",
+      "name": "Mark email failed",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        700,
+        620
+      ]
+    }
+  ],
+  "connections": {
+    "Supabase Webhook": {
+      "main": [
+        [
+          {
+            "node": "Which table?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Which table?": {
+      "main": [
+        [
+          {
+            "node": "Prepare event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare task",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare event": {
+      "main": [
+        [
+          {
+            "node": "Create Google Calendar event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Google Calendar event": {
+      "main": [
+        [
+          {
+            "node": "Mark event synced",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare task": {
+      "main": [
+        [
+          {
+            "node": "Create Google Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Google Task": {
+      "main": [
+        [
+          {
+            "node": "Mark task synced",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Gmail": {
+      "main": [
+        [
+          {
+            "node": "Mark email sent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark email failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

@@ -1,0 +1,7 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "saydo": "./src/supervisor.py:graph"
+  },
+  "env": ".env"
+}
