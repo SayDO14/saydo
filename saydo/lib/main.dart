@@ -1,18 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
-  runApp(const MainApp());
+import 'core/config.dart';
+import 'core/router.dart';
+import 'core/theme.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (!AppConfig.isConfigured) {
+    runApp(const _MissingConfigApp());
+    return;
+  }
+
+  await Supabase.initialize(
+    url: AppConfig.supabaseUrl,
+    anonKey: AppConfig.supabaseAnonKey,
+  );
+  runApp(const ProviderScope(child: SayDoApp()));
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class SayDoApp extends ConsumerWidget {
+  const SayDoApp({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return MaterialApp.router(
+      title: 'SayDo',
+      theme: buildTheme(Brightness.light),
+      darkTheme: buildTheme(Brightness.dark),
+      routerConfig: ref.watch(routerProvider),
+    );
+  }
+}
+
+class _MissingConfigApp extends StatelessWidget {
+  const _MissingConfigApp();
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
       home: Scaffold(
         body: Center(
-          child: Text('Hello World!'),
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Text(
+              'Missing SUPABASE_URL / SUPABASE_ANON_KEY.\n\n'
+              'Run with:\nflutter run --dart-define=SUPABASE_URL=... '
+              '--dart-define=SUPABASE_ANON_KEY=...',
+            ),
+          ),
         ),
       ),
     );
