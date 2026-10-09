@@ -31,6 +31,8 @@ class VoiceController extends Notifier<VoiceState> {
     return const VoiceState();
   }
 
+  void reset() => state = const VoiceState();
+
   /// Tap once to start, tap again to stop and send.
   Future<void> toggle() async {
     switch (state.status) {

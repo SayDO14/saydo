@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../auth/auth_providers.dart';
+import '../confirm/proposal_sheet.dart';
+import '../contacts/contacts_repository.dart';
+import '../events/events_repository.dart';
 import '../voice/voice_controller.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -10,6 +14,31 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final voice = ref.watch(voiceControllerProvider);
+
+    // When the agent proposes something, show the confirmation sheet.
+    ref.listen(voiceControllerProvider, (prev, next) async {
+      final result = next.result;
+      if (next.status == VoiceStatus.done && prev?.status != VoiceStatus.done && result != null && result.isProposal) {
+        final outcome = await showModalBottomSheet<ProposalOutcome>(
+          context: context,
+          isScrollControlled: true,
+          isDismissible: false,
+          enableDrag: false,
+          builder: (_) => ProposalSheet(result: result),
+        );
+        ref.read(voiceControllerProvider.notifier).reset();
+        if (outcome == ProposalOutcome.saved) {
+          // The Events tab stays mounted, so tell it (and Contacts) to reload.
+          ref.invalidate(eventsProvider);
+          ref.invalidate(contactsProvider);
+        }
+        if (outcome == ProposalOutcome.saved && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Saved. It will sync to Google shortly.')),
+          );
+        }
+      }
+    });
     final theme = Theme.of(context);
     final recording = voice.status == VoiceStatus.recording;
     final uploading = voice.status == VoiceStatus.uploading;
@@ -26,6 +55,11 @@ class HomeScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('SayDo'),
         actions: [
+          IconButton(
+            tooltip: 'Contacts',
+            icon: const Icon(Icons.contacts_outlined),
+            onPressed: () => context.push('/contacts'),
+          ),
           IconButton(
             tooltip: 'Sign out',
             icon: const Icon(Icons.logout),
@@ -68,7 +102,8 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-/// Temporary raw view. The confirmation card (next feature) replaces this.
+/// Shows the transcript and the agent's question when it needs more info
+/// (answering it by voice is the next feature).
 class _ResultPreview extends StatelessWidget {
   const _ResultPreview({required this.voice});
   final VoiceState voice;

@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../features/auth/auth_providers.dart';
 import '../features/auth/login_screen.dart';
 import '../features/home/home_screen.dart';
+import '../features/onboarding/onboarding_screen.dart';
 
 /// Lets go_router re-run `redirect` whenever auth changes.
 class _AuthRefresh extends ChangeNotifier {
@@ -33,12 +34,18 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final signedIn = repo.currentSession != null;
       final onLogin = state.matchedLocation == '/login';
-      if (!signedIn) return onLogin ? null : '/login';
-      if (onLogin) return '/';
+      final onOnboarding = state.matchedLocation == '/onboarding';
+
+      if (!signedIn) {
+        if (onOnboarding) return null;
+        return onLogin ? null : '/onboarding';
+      }
+      if (onLogin || onOnboarding) return '/';
       return null;
     },
     routes: [
       GoRoute(path: '/', builder: (_, __) => const HomeScreen()),
+      GoRoute(path: '/onboarding', builder: (_, __) => const OnboardingScreen()),
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
     ],
   );

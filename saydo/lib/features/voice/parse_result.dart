@@ -12,6 +12,7 @@ class ParseResult {
     this.toName,
     this.subject,
     this.body,
+    this.raw = const {},
   });
 
   final String status; // ok | needs_info | error
@@ -25,6 +26,7 @@ class ParseResult {
   final String? toName;
   final String? subject;
   final String? body;
+  final Map<String, dynamic> raw; // untouched agent JSON, stored as parsed_json
 
   bool get needsInfo => status == 'needs_info';
   bool get isProposal => status == 'ok' && type != null;
@@ -41,5 +43,6 @@ class ParseResult {
         toName: j['to_name'] as String?,
         subject: j['subject'] as String?,
         body: j['body'] as String?,
+        raw: j,
       );
 }
