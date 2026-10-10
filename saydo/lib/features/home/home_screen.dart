@@ -6,6 +6,7 @@ import '../auth/auth_providers.dart';
 import '../confirm/proposal_sheet.dart';
 import '../contacts/contacts_repository.dart';
 import '../events/events_repository.dart';
+import '../tasks/tasks_repository.dart';
 import '../voice/voice_controller.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -28,9 +29,10 @@ class HomeScreen extends ConsumerWidget {
         );
         ref.read(voiceControllerProvider.notifier).reset();
         if (outcome == ProposalOutcome.saved) {
-          // The Events tab stays mounted, so tell it (and Contacts) to reload.
+          // The tabs stay mounted, so tell them to reload.
           ref.invalidate(eventsProvider);
           ref.invalidate(contactsProvider);
+          ref.invalidate(tasksProvider);
         }
         if (outcome == ProposalOutcome.saved && context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

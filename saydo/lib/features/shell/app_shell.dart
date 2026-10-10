@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Bottom navigation around the main tabs. Tasks and Emails tabs will be
-/// added here (and as branches in router.dart) when those lists are built.
+/// Barre de navigation inférieure persistante à 5 onglets.
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.shell});
   final StatefulNavigationShell shell;
@@ -18,12 +17,27 @@ class AppShell extends StatelessWidget {
           NavigationDestination(
             icon: Icon(Icons.mic_none_rounded),
             selectedIcon: Icon(Icons.mic_rounded),
-            label: 'Voice',
+            label: 'Vocal',
           ),
           NavigationDestination(
             icon: Icon(Icons.event_outlined),
             selectedIcon: Icon(Icons.event),
-            label: 'Events',
+            label: 'Événements',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.check_box_outlined),
+            selectedIcon: Icon(Icons.check_box_rounded),
+            label: 'Tâches',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.mail_outline_rounded),
+            selectedIcon: Icon(Icons.mail_rounded),
+            label: 'Emails',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings_rounded),
+            label: 'Paramètres',
           ),
         ],
       ),
