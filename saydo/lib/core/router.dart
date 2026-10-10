@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../features/auth/auth_providers.dart';
 import '../features/auth/login_screen.dart';
 import '../features/contacts/contacts_screen.dart';
-import '../features/emails/emails_placeholder_screen.dart';
+import '../features/emails/emails_screen.dart';
 import '../features/events/events_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
@@ -81,7 +81,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/emails',
-                builder: (context, state) => const EmailsPlaceholderScreen(),
+                builder: (context, state) => const EmailsScreen(),
               ),
             ],
           ),

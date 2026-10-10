@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../auth/auth_providers.dart';
 import '../confirm/proposal_sheet.dart';
 import '../contacts/contacts_repository.dart';
+import '../emails/emails_repository.dart';
 import '../events/events_repository.dart';
 import '../tasks/tasks_repository.dart';
 import '../voice/voice_controller.dart';
@@ -33,6 +34,7 @@ class HomeScreen extends ConsumerWidget {
           ref.invalidate(eventsProvider);
           ref.invalidate(contactsProvider);
           ref.invalidate(tasksProvider);
+          ref.invalidate(emailsProvider);
         }
         if (outcome == ProposalOutcome.saved && context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
