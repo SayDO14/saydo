@@ -11,7 +11,9 @@ import '../features/emails/emails_screen.dart';
 import '../features/events/events_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
-import '../features/settings/settings_placeholder_screen.dart';
+import '../features/settings/profile_screen.dart';
+import '../features/settings/security_screen.dart';
+import '../features/settings/settings_screen.dart';
 import '../features/shell/app_shell.dart';
 import '../features/tasks/tasks_screen.dart';
 
@@ -89,7 +91,17 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/settings',
-                builder: (context, state) => const SettingsPlaceholderScreen(),
+                builder: (context, state) => const SettingsScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'profile',
+                    builder: (context, state) => const ProfileScreen(),
+                  ),
+                  GoRoute(
+                    path: 'security',
+                    builder: (context, state) => const SecurityScreen(),
+                  ),
+                ],
               ),
             ],
           ),
