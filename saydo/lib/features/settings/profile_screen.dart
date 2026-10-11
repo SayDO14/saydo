@@ -10,20 +10,32 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen>
+    with SingleTickerProviderStateMixin {
   final _nameCtrl = TextEditingController();
   final _bioCtrl = TextEditingController(
-    text: 'Étudiante en informatique\nPassionnée par la technologie 💻',
+    text: 'Etudiante en informatique\nPassionnee par la technologie',
   );
 
   bool _loading = true;
   bool _saving = false;
   bool _showSuccessNotif = false;
-  String _successMsg = 'Le nom a été modifié avec succès.';
+  String _successMsg = 'Le nom a ete modifie avec succes.';
+
+  late AnimationController _successAnimCtrl;
+  late Animation<double> _successAnim;
 
   @override
   void initState() {
     super.initState();
+    _successAnimCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
+    _successAnim = CurvedAnimation(
+      parent: _successAnimCtrl,
+      curve: Curves.easeOutBack,
+    );
     _loadProfile();
   }
 
@@ -31,6 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void dispose() {
     _nameCtrl.dispose();
     _bioCtrl.dispose();
+    _successAnimCtrl.dispose();
     super.dispose();
   }
 
@@ -40,7 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     String name = prefs.getString('user_display_name') ?? '';
     String bio = prefs.getString('user_bio') ??
-        'Étudiante en informatique\nPassionnée par la technologie 💻';
+        'Etudiante en informatique\nPassionnee par la technologie';
 
     if (name.isEmpty && user != null) {
       name = user.userMetadata?['full_name'] as String? ??
@@ -75,7 +88,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _saveProfile() async {
     if (_saving) return;
-    setState(() => _saving = true);
+    setState(() {
+      _saving = true;
+      _showSuccessNotif = false;
+    });
 
     final newName = _nameCtrl.text.trim();
     final newBio = _bioCtrl.text.trim();
@@ -114,8 +130,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         setState(() {
           _saving = false;
           _showSuccessNotif = true;
-          _successMsg = 'Le nom a été modifié avec succès.';
+          _successMsg = 'Le nom a ete modifie avec succes.';
         });
+        _successAnimCtrl.forward(from: 0);
       }
     } catch (e) {
       if (mounted) {
@@ -160,16 +177,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     shape: BoxShape.circle,
                     color: Color(0xFF1D2658),
                   ),
-                  child: const Icon(Icons.smart_toy_rounded, color: Color(0xFF00E5FF), size: 22),
+                  child: const Icon(Icons.smart_toy_rounded,
+                      color: Color(0xFF00E5FF), size: 22),
                 ),
-                title: const Text('Avatar Robot SayDo', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-                subtitle: const Text('Actuellement utilisé', style: TextStyle(color: Color(0xFF7E89B5), fontSize: 12)),
+                title: const Text('Avatar Robot SayDo',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w600)),
+                subtitle: const Text('Actuellement utilise',
+                    style:
+                        TextStyle(color: Color(0xFF7E89B5), fontSize: 12)),
                 onTap: () {
                   Navigator.pop(ctx);
                   setState(() {
                     _showSuccessNotif = true;
-                    _successMsg = 'Avatar SayDo sélectionné avec succès.';
+                    _successMsg = 'Avatar SayDo selectionne avec succes.';
                   });
+                  _successAnimCtrl.forward(from: 0);
                 },
               ),
               const SizedBox(height: 8),
@@ -181,15 +204,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     shape: BoxShape.circle,
                     color: Color(0xFF1D2658),
                   ),
-                  child: const Icon(Icons.photo_library_outlined, color: Colors.white70, size: 22),
+                  child: const Icon(Icons.photo_library_outlined,
+                      color: Colors.white70, size: 22),
                 ),
-                title: const Text('Choisir dans la galerie', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-                subtitle: const Text('Importer une image personnelle', style: TextStyle(color: Color(0xFF7E89B5), fontSize: 12)),
+                title: const Text('Choisir dans la galerie',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w600)),
+                subtitle: const Text('Importer une image personnelle',
+                    style:
+                        TextStyle(color: Color(0xFF7E89B5), fontSize: 12)),
                 onTap: () {
                   Navigator.pop(ctx);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Galerie photo bientôt disponible'),
+                      content: Text('Galerie photo bientot disponible'),
                       backgroundColor: Color(0xFF1B224E),
                     ),
                   );
@@ -210,7 +238,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: const Color(0xFF070818),
       body: Stack(
         children: [
-          // Background mesh wave asset at top
+          // Background wave
           Positioned(
             top: 0,
             left: 0,
@@ -229,18 +257,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SafeArea(
             child: _loading
                 ? const Center(
-                    child: CircularProgressIndicator(color: Color(0xFF4E78FF)),
+                    child: CircularProgressIndicator(
+                        color: Color(0xFF4E78FF)),
                   )
                 : ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
                     children: [
-                      // Header with back button & SayDo / Profil & Robot unclipped illustration
+                      // ── Header ───────────────────────────────────
                       SizedBox(
                         height: 95,
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
-                            // Back button & Title
                             Positioned(
                               left: 0,
                               top: 6,
@@ -269,7 +298,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   const SizedBox(width: 16),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: const [
                                       Text(
@@ -295,8 +325,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ],
                               ),
                             ),
-
-                            // 3D Robot with laptop sitting at top right (fully framed)
+                            // Robot illustration
                             Positioned(
                               right: 4,
                               top: -4,
@@ -306,7 +335,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 child: Image.asset(
                                   'assets/images/robot_laptop.png',
                                   fit: BoxFit.contain,
-                                  errorBuilder: (_, __, ___) => const SizedBox(),
+                                  errorBuilder: (_, __, ___) =>
+                                      const SizedBox(),
                                 ),
                               ),
                             ),
@@ -315,9 +345,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      // Card 1: Avatar + Nom (Unified iOS glassmorphic card)
+                      // ── Card 1: Avatar + Nom ─────────────────────
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 14),
                         decoration: BoxDecoration(
                           color: const Color(0xFF101332),
                           borderRadius: BorderRadius.circular(20),
@@ -328,7 +359,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         child: Row(
                           children: [
-                            // Perfectly centered circular robot avatar with cyan glow & camera badge
                             Stack(
                               clipBehavior: Clip.none,
                               children: [
@@ -355,9 +385,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       child: Image.asset(
                                         'assets/images/robot_avatar_head.png',
                                         fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) => Image.asset(
+                                        errorBuilder: (_, __, ___) =>
+                                            Image.asset(
                                           'assets/images/robot_standing.png',
                                           fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) =>
+                                              const Icon(
+                                            Icons.smart_toy_rounded,
+                                            color: Color(0xFF00E5FF),
+                                            size: 32,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -390,8 +427,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ],
                             ),
                             const SizedBox(width: 16),
-
-                            // Nom input (Harmonious unified style matching card)
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -409,7 +444,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     height: 44,
                                     decoration: BoxDecoration(
                                       color: const Color(0xFF0B0D22),
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius:
+                                          BorderRadius.circular(12),
                                       border: Border.all(
                                         color: const Color(0xFF1E244E),
                                         width: 1.1,
@@ -424,9 +460,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                       decoration: const InputDecoration(
                                         hintText: 'Votre nom',
-                                        hintStyle: TextStyle(color: Color(0xFF4B5380)),
+                                        hintStyle: TextStyle(
+                                            color: Color(0xFF4B5380)),
                                         border: InputBorder.none,
-                                        contentPadding: EdgeInsets.symmetric(
+                                        contentPadding:
+                                            EdgeInsets.symmetric(
                                           horizontal: 14,
                                           vertical: 10,
                                         ),
@@ -441,9 +479,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 14),
 
-                      // Card 2: Bio (Unified single glass container, NO weird double background)
+                      // ── Card 2: Bio — single uniform color, no inner box ─
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
                         decoration: BoxDecoration(
                           color: const Color(0xFF101332),
                           borderRadius: BorderRadius.circular(20),
@@ -474,49 +512,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ],
                             ),
                             const SizedBox(height: 10),
-                            // Textarea container that blends smoothly with the card
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF0B0D22),
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(
-                                  color: const Color(0xFF1E244E),
-                                  width: 1.1,
-                                ),
+                            // ── TextField directly — SAME background as card
+                            TextField(
+                              controller: _bioCtrl,
+                              maxLines: 4,
+                              maxLength: 150,
+                              buildCounter: (_, {required currentLength, required isFocused, maxLength}) => null,
+                              onChanged: (_) => setState(() {}),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                height: 1.55,
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  TextField(
-                                    controller: _bioCtrl,
-                                    maxLines: 3,
-                                    maxLength: 150,
-                                    buildCounter: (_, {required currentLength, required isFocused, maxLength}) =>
-                                        null,
-                                    onChanged: (_) => setState(() {}),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      height: 1.45,
-                                    ),
-                                    decoration: const InputDecoration(
-                                      hintText: 'Décrivez-vous brièvement...',
-                                      hintStyle: TextStyle(color: Color(0xFF4B5380)),
-                                      border: InputBorder.none,
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.zero,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '$bioLength/150',
-                                    style: const TextStyle(
-                                      color: Color(0xFF5E6796),
-                                      fontSize: 11,
-                                    ),
-                                  ),
-                                ],
+                              decoration: InputDecoration(
+                                hintText: 'Decrivez-vous brievement...',
+                                hintStyle: const TextStyle(color: Color(0xFF4B5380)),
+                                filled: true,
+                                fillColor: const Color(0xFF101332),
+                                isDense: true,
+                                contentPadding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                              ),
+                            ),
+                            // Character counter
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                '$bioLength/150',
+                                style: TextStyle(
+                                  color: bioLength > 130
+                                      ? const Color(0xFFFF6B8A)
+                                      : const Color(0xFF5E6796),
+                                  fontSize: 11,
+                                ),
                               ),
                             ),
                           ],
@@ -524,13 +554,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 14),
 
-                      // Card 3: Photo de profil
+                      // ── Card 3: Photo de profil ──────────────────
                       InkWell(
                         onTap: _showPhotoOptions,
                         borderRadius: BorderRadius.circular(18),
                         child: Container(
                           height: 58,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16),
                           decoration: BoxDecoration(
                             color: const Color(0xFF101332),
                             borderRadius: BorderRadius.circular(18),
@@ -568,8 +599,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 24),
 
-                      // Button: Mettre à jour les informations
-                      // Refined dark indigo / sleek glass button matching the Figma mock
+                      // ── Save button (same original blue) ─────────
                       FilledButton(
                         onPressed: _saving ? null : _saveProfile,
                         style: FilledButton.styleFrom(
@@ -595,7 +625,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               )
                             : const Text(
-                                'Mettre à jour les informations',
+                                'Mettre a jour les informations',
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
@@ -605,62 +635,66 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Success notification card (exact Figma card design)
+                      // ── Success notification (same original) ──────
                       if (_showSuccessNotif)
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF11173A),
-                            borderRadius: BorderRadius.circular(18),
-                            border: Border.all(
-                              color: const Color(0xFF242E64),
-                              width: 1.2,
+                        ScaleTransition(
+                          scale: _successAnim,
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF11173A),
+                              borderRadius: BorderRadius.circular(18),
+                              border: Border.all(
+                                color: const Color(0xFF242E64),
+                                width: 1.2,
+                              ),
                             ),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: const Color(0xFF202A54),
-                                  border: Border.all(
-                                    color: const Color(0xFF303C74),
-                                    width: 1.1,
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: const Color(0xFF202A54),
+                                    border: Border.all(
+                                      color: const Color(0xFF303C74),
+                                      width: 1.1,
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.check_rounded,
+                                    color: Colors.white,
+                                    size: 20,
                                   ),
                                 ),
-                                child: const Icon(
-                                  Icons.check_rounded,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 14),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Profil mis à jour !',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Profil mis a jour !',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      _successMsg,
-                                      style: const TextStyle(
-                                        color: Color(0xFF8E9AC5),
-                                        fontSize: 12,
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        _successMsg,
+                                        style: const TextStyle(
+                                          color: Color(0xFF8E9AC5),
+                                          fontSize: 12,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       const SizedBox(height: 40),

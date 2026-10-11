@@ -2,27 +2,27 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/date_format.dart';
+import '../voice/voice_sheet.dart';
 import 'task_edit_sheet.dart';
 import 'task_item.dart';
 import 'tasks_repository.dart';
 
-// ─── Couleurs du thème ───────────────────────────────────────────────────────
-const _bgColor = Color(0xFF070818);
-const _cardColor = Color(0xFF0F1230);
-const _cardBorder = Color(0xFF1E2455);
-const _accentBlue = Color(0xFF2563EB);
-const _accentNeon = Color(0xFF3B82F6);
+// ── Design tokens ─────────────────────────────────────────────────────────────
+const _bg          = Color(0xFF070818);
+const _cardColor   = Color(0xFF0F1230);
+const _cardBorder  = Color(0xFF1E2455);
+const _accent      = Color(0xFF4E78FF);
 const _textPrimary = Colors.white;
-const _textSecondary = Color(0xFF8B9CC7);
-const _todoColor = Color(0xFF3B82F6);
-const _doneColor = Color(0xFF10B981);
+const _textSec     = Color(0xFF8B9CC7);
+const _doneColor   = Color(0xFF10B981);
 
-// ─── Filtre de l'écran ───────────────────────────────────────────────────────
-enum _Filter { all, todo, done }
+// ── Filter enum ───────────────────────────────────────────────────────────────
+enum _Filter { all, today, upcoming }
 
-// ─── Screen ─────────────────────────────────────────────────────────────────
+// ── Screen ────────────────────────────────────────────────────────────────────
 class TasksScreen extends ConsumerStatefulWidget {
   const TasksScreen({super.key});
 
@@ -38,7 +38,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
       await ref.read(tasksRepositoryProvider).toggleDone(task.id, isDone);
       ref.invalidate(tasksProvider);
     } catch (e) {
-      if (mounted) _showError('Impossible de mettre à jour la tâche : $e');
+      if (mounted) _showError('Impossible de mettre a jour la tache : $e');
     }
   }
 
@@ -55,23 +55,43 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
   Future<bool?> _confirmDelete(TaskItem task) => showDialog<bool>(
         context: context,
-        builder: (_) => _GlassDialog(
-          title: 'Supprimer la tâche ?',
-          body: '"${task.title}" sera supprimée définitivement.',
-          confirmLabel: 'Supprimer',
-          confirmColor: Colors.redAccent,
+        builder: (_) => AlertDialog(
+          backgroundColor: const Color(0xFF111535),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: const BorderSide(color: _cardBorder, width: 1.2),
+          ),
+          title: const Text('Supprimer la tache ?',
+              style: TextStyle(
+                  color: _textPrimary, fontWeight: FontWeight.bold)),
+          content: Text('"${task.title}" sera supprimee definitivement.',
+              style: const TextStyle(color: _textSec)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler',
+                  style: TextStyle(color: _textSec)),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Supprimer'),
+            ),
+          ],
         ),
       );
 
   void _showError(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(msg),
-        backgroundColor: Colors.redAccent.withOpacity(0.9),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(msg),
+      backgroundColor: Colors.redAccent.withValues(alpha: 0.9),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ));
   }
 
   @override
@@ -79,434 +99,352 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     final tasks = ref.watch(tasksProvider);
 
     return Scaffold(
-      backgroundColor: _bgColor,
+      backgroundColor: _bg,
       body: Stack(
         children: [
-          _AnimatedBackground(),
+          // Background wave
+          Positioned(
+            top: 0, left: 0, right: 0, height: 280,
+            child: Opacity(
+              opacity: 0.50,
+              child: Image.asset(
+                'assets/images/bg_wave.png',
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const SizedBox(),
+              ),
+            ),
+          ),
+
           SafeArea(
+            child: tasks.when(
+              loading: () => const Center(
+                  child: CircularProgressIndicator(color: _accent)),
+              error: (e, _) => Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.wifi_off_rounded,
+                        color: _textSec, size: 48),
+                    const SizedBox(height: 12),
+                    Text('Erreur de chargement\n$e',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: _textSec)),
+                    const SizedBox(height: 16),
+                    FilledButton(
+                      onPressed: () => ref.invalidate(tasksProvider),
+                      child: const Text('Reessayer'),
+                    ),
+                  ],
+                ),
+              ),
+              data: (items) => _TasksBody(
+                items: items,
+                filter: _filter,
+                onFilterChange: (f) => setState(() => _filter = f),
+                onToggle: _toggleDone,
+                onDelete: _delete,
+                onAdd: () => showTaskEditSheet(
+                    context, const TaskItem(id: '', title: '', status: 'todo')),
+                onVoiceAdd: () => showVoiceAssistant(context, ref),
+                onRefresh: () => ref.refresh(tasksProvider.future),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Tasks body ────────────────────────────────────────────────────────────────
+class _TasksBody extends StatelessWidget {
+  const _TasksBody({
+    required this.items,
+    required this.filter,
+    required this.onFilterChange,
+    required this.onToggle,
+    required this.onDelete,
+    required this.onAdd,
+    required this.onVoiceAdd,
+    required this.onRefresh,
+  });
+
+  final List<TaskItem> items;
+  final _Filter filter;
+  final ValueChanged<_Filter> onFilterChange;
+  final void Function(TaskItem, bool) onToggle;
+  final void Function(TaskItem) onDelete;
+  final VoidCallback onAdd;
+  final VoidCallback onVoiceAdd;
+  final Future<void> Function() onRefresh;
+
+  List<TaskItem> get _todo => items.where((t) => !t.isDone).toList();
+  List<TaskItem> get _done => items.where((t) => t.isDone).toList();
+
+  List<TaskItem> _filtered() {
+    final now = DateTime.now();
+    final todayStart = DateUtils.dateOnly(now);
+    final todayEnd = todayStart.add(const Duration(days: 1));
+    switch (filter) {
+      case _Filter.all:
+        return items.where((t) => !t.isDone).toList();
+      case _Filter.today:
+        return items.where((t) {
+          if (t.isDone) return false;
+          if (t.dueAt == null) return false;
+          return t.dueAt!.isAfter(todayStart.subtract(const Duration(seconds: 1))) &&
+              t.dueAt!.isBefore(todayEnd);
+        }).toList();
+      case _Filter.upcoming:
+        return items.where((t) {
+          if (t.isDone) return false;
+          if (t.dueAt == null) return false;
+          return t.dueAt!.isAfter(
+              DateUtils.dateOnly(now).add(const Duration(days: 1)));
+        }).toList();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final filtered = _filtered();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ── Header ──────────────────────────────────────────────────
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'SayDo',
+                    style: TextStyle(
+                      color: _accent,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Mes taches',
+                    style: TextStyle(
+                      color: _textPrimary,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  const Text(
+                    'Organisez vos priorites',
+                    style: TextStyle(color: _textSec, fontSize: 13),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              // Profile button + robot
+              Column(
+                children: [
+                  GestureDetector(
+                    onTap: () => context.go('/settings'),
+                    child: Container(
+                      width: 42, height: 42,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF111535),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                            color: const Color(0xFF222A60), width: 1.1),
+                      ),
+                      child: const Icon(Icons.person_outline_rounded,
+                          color: Colors.white70, size: 20),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  GestureDetector(
+                    onTap: onVoiceAdd,
+                    child: SizedBox(
+                      width: 70,
+                      child: Image.asset(
+                        'assets/images/robot_avatar_head.png',
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => Image.asset(
+                          'assets/images/robot_standing.png',
+                          height: 60,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) => const SizedBox(height: 60),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // ── Stats cards ──────────────────────────────────────────────
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            children: [
+              Expanded(
+                child: _StatCard(
+                  icon: Icons.check_box_outline_blank_rounded,
+                  label: 'A faire',
+                  count: _todo.length,
+                  color: _accent,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _StatCard(
+                  icon: Icons.check_circle_outline_rounded,
+                  label: 'Terminees',
+                  count: _done.length,
+                  color: _doneColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 14),
+
+        // ── Filter tabs ──────────────────────────────────────────────
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Container(
+            height: 44,
+            decoration: BoxDecoration(
+              color: _cardColor,
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: _cardBorder, width: 1.1),
+            ),
+            child: Row(
+              children: [
+                _FilterTab(
+                    label: 'Toutes',
+                    active: filter == _Filter.all,
+                    onTap: () => onFilterChange(_Filter.all)),
+                _FilterTab(
+                    label: "Aujourd'hui",
+                    active: filter == _Filter.today,
+                    onTap: () => onFilterChange(_Filter.today)),
+                _FilterTab(
+                    label: 'A venir',
+                    active: filter == _Filter.upcoming,
+                    onTap: () => onFilterChange(_Filter.upcoming)),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // ── Task list ────────────────────────────────────────────────
+        Expanded(
+          child: RefreshIndicator(
+            color: _accent,
+            onRefresh: onRefresh,
+            child: filtered.isEmpty
+                ? _EmptyState(onAdd: onAdd, onVoiceAdd: onVoiceAdd)
+                : ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                    children: [
+                      // Section header
+                      _SectionHeader(
+                        label: filter == _Filter.today
+                            ? "Aujourd'hui"
+                            : filter == _Filter.upcoming
+                                ? 'A venir'
+                                : "Aujourd'hui",
+                        count: filtered.length,
+                      ),
+                      const SizedBox(height: 10),
+                      // Task cards
+                      ...filtered.map((t) => _TaskCard(
+                            task: t,
+                            onToggle: (v) => onToggle(t, v),
+                            onDelete: () => onDelete(t),
+                            onTap: () {},
+                          )),
+                      const SizedBox(height: 14),
+                      // Voice add bar
+                      _VoiceAddBar(onTap: onVoiceAdd),
+                    ],
+                  ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── Stat card ─────────────────────────────────────────────────────────────────
+class _StatCard extends StatelessWidget {
+  const _StatCard({
+    required this.icon,
+    required this.label,
+    required this.count,
+    required this.color,
+  });
+  final IconData icon;
+  final String label;
+  final int count;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      decoration: BoxDecoration(
+        color: _cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _cardBorder, width: 1.1),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 22),
+          const SizedBox(width: 10),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(context),
-                _buildFilterTabs(),
-                const SizedBox(height: 8),
-                _buildNewTaskButton(context),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: tasks.when(
-                    loading: () => _buildLoading(),
-                    error: (e, _) => _buildError(e),
-                    data: (items) => _buildList(items),
+                Text(label,
+                    style: const TextStyle(
+                        color: _textSec, fontSize: 12)),
+                Text(
+                  '$count',
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    height: 1.1,
                   ),
                 ),
               ],
             ),
           ),
+          const Icon(Icons.chevron_right_rounded,
+              color: _textSec, size: 20),
         ],
       ),
     );
   }
-
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'MES TÂCHES',
-                style: TextStyle(
-                  color: _accentNeon,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 2.5,
-                ),
-              ),
-              const SizedBox(height: 2),
-              const Text(
-                'Mes tâches',
-                style: TextStyle(
-                  color: _textPrimary,
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const Spacer(),
-          _GlassIconButton(
-            icon: Icons.tune_rounded,
-            onTap: () {},
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFilterTabs() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-      child: Container(
-        height: 40,
-        decoration: BoxDecoration(
-          color: _cardColor,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: _cardBorder),
-        ),
-        child: Row(
-          children: [
-            _FilterTab(
-              label: 'Toutes',
-              active: _filter == _Filter.all,
-              onTap: () => setState(() => _filter = _Filter.all),
-            ),
-            _FilterTab(
-              label: 'À faire',
-              active: _filter == _Filter.todo,
-              onTap: () => setState(() => _filter = _Filter.todo),
-            ),
-            _FilterTab(
-              label: 'Terminées',
-              active: _filter == _Filter.done,
-              onTap: () => setState(() => _filter = _Filter.done),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNewTaskButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: GestureDetector(
-        onTap: () => showTaskEditSheet(
-          context,
-          TaskItem(id: '', title: '', status: 'todo'),
-        ),
-        child: Container(
-          height: 50,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF1D4ED8), Color(0xFF3B82F6)],
-            ),
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: [
-              BoxShadow(
-                color: _accentBlue.withOpacity(0.4),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.add_rounded, color: Colors.white, size: 22),
-              SizedBox(width: 8),
-              Text(
-                'Nouvelle tâche',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildList(List<TaskItem> items) {
-    final filtered = switch (_filter) {
-      _Filter.all => items,
-      _Filter.todo => items.where((t) => !t.isDone).toList(),
-      _Filter.done => items.where((t) => t.isDone).toList(),
-    };
-
-    if (filtered.isEmpty) return _buildEmpty();
-
-    return RefreshIndicator(
-      onRefresh: () => ref.refresh(tasksProvider.future),
-      color: _accentNeon,
-      backgroundColor: _cardColor,
-      child: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-        itemCount: filtered.length,
-        itemBuilder: (_, i) => _TaskCard(
-          task: filtered[i],
-          onToggleDone: (val) => _toggleDone(filtered[i], val),
-          onDelete: () => _delete(filtered[i]),
-          onTap: () => showTaskEditSheet(context, filtered[i]),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoading() => const Center(
-        child: CircularProgressIndicator(color: _accentNeon, strokeWidth: 2),
-      );
-
-  Widget _buildError(Object e) => Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.wifi_off_rounded, color: _textSecondary, size: 48),
-            const SizedBox(height: 12),
-            Text('Erreur de chargement\n$e',
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: _textSecondary)),
-            const SizedBox(height: 16),
-            _PillButton(
-              label: 'Réessayer',
-              onTap: () => ref.invalidate(tasksProvider),
-            ),
-          ],
-        ),
-      );
-
-  Widget _buildEmpty() => Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _accentBlue.withOpacity(0.1),
-                border: Border.all(color: _accentBlue.withOpacity(0.3)),
-              ),
-              child: const Icon(Icons.check_circle_outline_rounded,
-                  color: _accentNeon, size: 38),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Aucune tâche pour le moment',
-              style: TextStyle(
-                  color: _textPrimary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              'Dictez-en une avec le micro',
-              style: TextStyle(color: _textSecondary, fontSize: 13),
-            ),
-          ],
-        ),
-      );
 }
 
-// ─── Task card ───────────────────────────────────────────────────────────────
-class _TaskCard extends StatefulWidget {
-  const _TaskCard({
-    required this.task,
-    required this.onToggleDone,
-    required this.onDelete,
-    required this.onTap,
-  });
-
-  final TaskItem task;
-  final ValueChanged<bool> onToggleDone;
-  final VoidCallback onDelete;
-  final VoidCallback onTap;
-
-  @override
-  State<_TaskCard> createState() => _TaskCardState();
-}
-
-class _TaskCardState extends State<_TaskCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _ctrl;
-  late Animation<double> _scale;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 120));
-    _scale = Tween(begin: 1.0, end: 0.97)
-        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final task = widget.task;
-    final isDone = task.isDone;
-
-    String dateLabel = '';
-    if (task.dueAt != null) {
-      dateLabel = formatDayLabel(task.dueAt!);
-      if (task.dueHasTime) {
-        dateLabel += ' · ${formatClock(task.dueAt!)}';
-      }
-    }
-
-    return GestureDetector(
-      onTapDown: (_) => _ctrl.forward(),
-      onTapUp: (_) {
-        _ctrl.reverse();
-        widget.onTap();
-      },
-      onTapCancel: () => _ctrl.reverse(),
-      child: ScaleTransition(
-        scale: _scale,
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          decoration: BoxDecoration(
-            color: _cardColor,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isDone ? _doneColor.withOpacity(0.3) : _cardBorder,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.25),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                child: Row(
-                  children: [
-                    // Checkbox
-                    GestureDetector(
-                      onTap: () => widget.onToggleDone(!isDone),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        width: 26,
-                        height: 26,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isDone
-                              ? _doneColor.withOpacity(0.15)
-                              : Colors.transparent,
-                          border: Border.all(
-                            color: isDone ? _doneColor : _textSecondary,
-                            width: 2,
-                          ),
-                        ),
-                        child: isDone
-                            ? const Icon(Icons.check_rounded,
-                                size: 15, color: _doneColor)
-                            : null,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Content
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            task.title,
-                            style: TextStyle(
-                              color: isDone ? _textSecondary : _textPrimary,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              decoration: isDone
-                                  ? TextDecoration.lineThrough
-                                  : TextDecoration.none,
-                              decorationColor: _textSecondary,
-                            ),
-                          ),
-                          if (dateLabel.isNotEmpty) ...[
-                            const SizedBox(height: 5),
-                            Row(
-                              children: [
-                                const Icon(Icons.calendar_today_rounded,
-                                    size: 11, color: _textSecondary),
-                                const SizedBox(width: 4),
-                                Text(
-                                  dateLabel,
-                                  style: const TextStyle(
-                                      color: _textSecondary, fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    // Status badge
-                    _StatusBadge(isDone: isDone),
-                    const SizedBox(width: 6),
-                    // Arrow
-                    const Icon(Icons.chevron_right_rounded,
-                        color: _textSecondary, size: 20),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Status badge ────────────────────────────────────────────────────────────
-class _StatusBadge extends StatelessWidget {
-  const _StatusBadge({required this.isDone});
-  final bool isDone;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: isDone
-            ? _doneColor.withOpacity(0.15)
-            : _todoColor.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isDone
-              ? _doneColor.withOpacity(0.5)
-              : _todoColor.withOpacity(0.5),
-        ),
-      ),
-      child: Text(
-        isDone ? 'Terminée' : 'À faire',
-        style: TextStyle(
-          color: isDone ? _doneColor : _todoColor,
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Filter tab ──────────────────────────────────────────────────────────────
+// ── Filter tab ────────────────────────────────────────────────────────────────
 class _FilterTab extends StatelessWidget {
   const _FilterTab({
     required this.label,
     required this.active,
     required this.onTap,
   });
-
   final String label;
   final bool active;
   final VoidCallback onTap;
@@ -522,17 +460,17 @@ class _FilterTab extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: active
                 ? const LinearGradient(
-                    colors: [Color(0xFF1D4ED8), Color(0xFF3B82F6)],
+                    colors: [Color(0xFF1D4ED8), Color(0xFF4E78FF)],
                   )
                 : null,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(18),
             boxShadow: active
                 ? [
                     BoxShadow(
-                      color: _accentBlue.withOpacity(0.4),
+                      color: _accent.withValues(alpha: 0.35),
                       blurRadius: 8,
                       offset: const Offset(0, 3),
-                    ),
+                    )
                   ]
                 : null,
           ),
@@ -540,9 +478,10 @@ class _FilterTab extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: active ? Colors.white : _textSecondary,
-              fontSize: 13,
-              fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+              color: active ? Colors.white : _textSec,
+              fontSize: 12,
+              fontWeight:
+                  active ? FontWeight.w600 : FontWeight.w400,
             ),
           ),
         ),
@@ -551,118 +490,239 @@ class _FilterTab extends StatelessWidget {
   }
 }
 
-// ─── Glass icon button ────────────────────────────────────────────────────────
-class _GlassIconButton extends StatelessWidget {
-  const _GlassIconButton({required this.icon, required this.onTap});
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: _cardColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: _cardBorder),
-        ),
-        child: Icon(icon, color: _textSecondary, size: 20),
-      ),
-    );
-  }
-}
-
-// ─── Pill button ─────────────────────────────────────────────────────────────
-class _PillButton extends StatelessWidget {
-  const _PillButton({required this.label, required this.onTap});
+// ── Section header ────────────────────────────────────────────────────────────
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.label, required this.count});
   final String label;
-  final VoidCallback onTap;
+  final int count;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF1D4ED8), Color(0xFF3B82F6)],
-          ),
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Text(label,
+    return Row(
+      children: [
+        Text(label,
             style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.w600)),
-      ),
+              color: _textPrimary,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            )),
+        const SizedBox(width: 8),
+        Container(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1A2460),
+            borderRadius: BorderRadius.circular(99),
+          ),
+          child: Text('$count',
+              style: const TextStyle(
+                  color: _accent,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold)),
+        ),
+      ],
     );
   }
 }
 
-// ─── Glass dialog ─────────────────────────────────────────────────────────────
-class _GlassDialog extends StatelessWidget {
-  const _GlassDialog({
-    required this.title,
-    required this.body,
-    required this.confirmLabel,
-    required this.confirmColor,
+// ── Task card ─────────────────────────────────────────────────────────────────
+class _TaskCard extends StatelessWidget {
+  const _TaskCard({
+    required this.task,
+    required this.onToggle,
+    required this.onDelete,
+    required this.onTap,
   });
-
-  final String title;
-  final String body;
-  final String confirmLabel;
-  final Color confirmColor;
+  final TaskItem task;
+  final ValueChanged<bool> onToggle;
+  final VoidCallback onDelete;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: const Color(0xFF131533),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(title,
-                style: const TextStyle(
-                    color: _textPrimary,
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            Text(body,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: _textSecondary, fontSize: 14)),
-            const SizedBox(height: 24),
-            Row(
+    final isDone = task.isDone;
+    final hasPriority = task.priority > 1;
+
+    String dateLabel = '';
+    if (task.dueAt != null) {
+      dateLabel = formatDayLabel(task.dueAt!);
+      if (task.dueHasTime) {
+        dateLabel += ' - ${formatClock(task.dueAt!)}';
+      }
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: _cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDone
+              ? _doneColor.withValues(alpha: 0.3)
+              : _cardBorder,
+          width: 1.2,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(14, 14, 10, 14),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: _cardBorder),
-                      foregroundColor: _textSecondary,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                // Square checkbox
+                GestureDetector(
+                  onTap: () => onToggle(!isDone),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 24,
+                    height: 24,
+                    margin: const EdgeInsets.only(top: 1),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
+                      color: isDone
+                          ? _doneColor.withValues(alpha: 0.15)
+                          : Colors.transparent,
+                      border: Border.all(
+                        color: isDone ? _doneColor : _textSec,
+                        width: 1.8,
+                      ),
                     ),
-                    onPressed: () => Navigator.pop(context, false),
-                    child: const Text('Annuler'),
+                    child: isDone
+                        ? const Icon(Icons.check_rounded,
+                            size: 14, color: _doneColor)
+                        : null,
                   ),
                 ),
                 const SizedBox(width: 12),
+
+                // Content
                 Expanded(
-                  child: FilledButton(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: confirmColor,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ),
-                    onPressed: () => Navigator.pop(context, true),
-                    child: Text(confirmLabel),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        task.title,
+                        style: TextStyle(
+                          color: isDone ? _textSec : _textPrimary,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          decoration: isDone
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                          decorationColor: _textSec,
+                        ),
+                      ),
+                      if (dateLabel.isNotEmpty) ...[
+                        const SizedBox(height: 5),
+                        Row(
+                          children: [
+                            const Icon(Icons.calendar_today_rounded,
+                                size: 11, color: _textSec),
+                            const SizedBox(width: 4),
+                            Text(dateLabel,
+                                style: const TextStyle(
+                                    color: _textSec, fontSize: 12)),
+                          ],
+                        ),
+                      ],
+                      if (hasPriority) ...[
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF4E78FF)
+                                .withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(99),
+                            border: Border.all(
+                              color: _accent.withValues(alpha: 0.4),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Icon(Icons.flag_rounded,
+                                  size: 11, color: _accent),
+                              SizedBox(width: 4),
+                              Text('Prioritaire',
+                                  style: TextStyle(
+                                      color: _accent,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+
+                // Three-dot menu
+                GestureDetector(
+                  onTap: () => _showMenu(context),
+                  child: const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Icon(Icons.more_vert_rounded,
+                        color: _textSec, size: 20),
                   ),
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showMenu(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => Container(
+        margin: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFF111535),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: _cardBorder, width: 1.2),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 36, height: 4,
+              margin: const EdgeInsets.only(top: 12, bottom: 16),
+              decoration: BoxDecoration(
+                color: _cardBorder,
+                borderRadius: BorderRadius.circular(99),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.check_circle_outline_rounded,
+                  color: _doneColor),
+              title: Text(
+                task.isDone ? 'Marquer comme a faire' : 'Marquer comme terminee',
+                style: const TextStyle(color: _textPrimary),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                onToggle(!task.isDone);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline_rounded,
+                  color: Colors.redAccent),
+              title: const Text('Supprimer',
+                  style: TextStyle(color: Colors.redAccent)),
+              onTap: () {
+                Navigator.pop(context);
+                onDelete();
+              },
+            ),
+            const SizedBox(height: 8),
           ],
         ),
       ),
@@ -670,63 +730,108 @@ class _GlassDialog extends StatelessWidget {
   }
 }
 
-// ─── Animated background ─────────────────────────────────────────────────────
-class _AnimatedBackground extends StatefulWidget {
-  @override
-  State<_AnimatedBackground> createState() => _AnimatedBackgroundState();
-}
-
-class _AnimatedBackgroundState extends State<_AnimatedBackground>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _ctrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl =
-        AnimationController(vsync: this, duration: const Duration(seconds: 8))
-          ..repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
+// ── Voice add bar ─────────────────────────────────────────────────────────────
+class _VoiceAddBar extends StatelessWidget {
+  const _VoiceAddBar({required this.onTap});
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _ctrl,
-      builder: (_, __) => CustomPaint(
-        painter: _BgPainter(_ctrl.value),
-        child: const SizedBox.expand(),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 56,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: _cardColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: _cardBorder, width: 1.1),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36, height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _accent.withValues(alpha: 0.15),
+                border: Border.all(
+                    color: _accent.withValues(alpha: 0.4), width: 1.2),
+              ),
+              child: const Icon(Icons.mic_rounded,
+                  color: _accent, size: 18),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Ajoutez une tache avec votre voix',
+                style: TextStyle(color: _textSec, fontSize: 14),
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded,
+                color: _textSec, size: 20),
+          ],
+        ),
       ),
     );
   }
 }
 
-class _BgPainter extends CustomPainter {
-  _BgPainter(this.t);
-  final double t;
+// ── Empty state ───────────────────────────────────────────────────────────────
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({required this.onAdd, required this.onVoiceAdd});
+  final VoidCallback onAdd;
+  final VoidCallback onVoiceAdd;
 
   @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..style = PaintingStyle.fill;
-
-    paint.color = const Color(0xFF1D4ED8).withOpacity(0.12 + 0.04 * t);
-    canvas.drawCircle(
-        Offset(size.width * 0.85, size.height * (0.05 + 0.05 * t)),
-        size.width * 0.4,
-        paint);
-
-    paint.color = const Color(0xFF312E81).withOpacity(0.15 + 0.05 * t);
-    canvas.drawCircle(
-        Offset(size.width * 0.1, size.height * (0.7 + 0.1 * t)),
-        size.width * 0.45,
-        paint);
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+      children: [
+        const SizedBox(height: 40),
+        Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GestureDetector(
+                onTap: onVoiceAdd,
+                child: Container(
+                  width: 72, height: 72,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFF111535),
+                    border: Border.all(
+                        color: const Color(0xFF222A60), width: 1.2),
+                  ),
+                  child: const Icon(Icons.mic_rounded,
+                      color: _accent, size: 34),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Aucune tâche pour le moment',
+                style: TextStyle(
+                    color: _textPrimary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 6),
+              GestureDetector(
+                onTap: onVoiceAdd,
+                child: const Text(
+                  'Dictez-en une avec le micro',
+                  style: TextStyle(
+                    color: _accent,
+                    fontSize: 13,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 40),
+        _VoiceAddBar(onTap: onVoiceAdd),
+      ],
+    );
   }
-
-  @override
-  bool shouldRepaint(_BgPainter old) => old.t != t;
 }

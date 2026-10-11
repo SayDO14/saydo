@@ -136,7 +136,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                             await _client.auth.updateUser(
                               UserAttributes(password: p1),
                             );
-                            if (mounted) {
+                            if (mounted && ctx.mounted) {
                               Navigator.pop(ctx);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(

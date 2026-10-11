@@ -1,7 +1,8 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Barre de navigation inférieure persistante à style moderne néon.
+/// Barre de navigation inférieure flottante style glassmorphism moderne (conforme Photo 3).
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.shell});
   final StatefulNavigationShell shell;
@@ -10,65 +11,153 @@ class AppShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF070818),
+      extendBody: true,
       body: shell,
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: Color(0xFF08091B),
-          border: Border(
-            top: BorderSide(color: Color(0xFF171A3B), width: 1.0),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(32),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Container(
+                height: 68,
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0A0F2E).withValues(alpha: 0.90),
+                  borderRadius: BorderRadius.circular(32),
+                  border: Border.all(
+                    color: const Color(0xFF222C68),
+                    width: 1.2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      blurRadius: 24,
+                      offset: const Offset(0, 8),
+                    ),
+                    BoxShadow(
+                      color: const Color(0xFF3B82F6).withValues(alpha: 0.12),
+                      blurRadius: 16,
+                      offset: const Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    _BarItem(
+                      icon: Icons.home_outlined,
+                      activeIcon: Icons.home_rounded,
+                      label: 'Accueil',
+                      isSelected: shell.currentIndex == 0,
+                      onTap: () => shell.goBranch(0, initialLocation: shell.currentIndex == 0),
+                    ),
+                    _BarItem(
+                      icon: Icons.calendar_today_outlined,
+                      activeIcon: Icons.calendar_today_rounded,
+                      label: 'Événements',
+                      isSelected: shell.currentIndex == 1,
+                      onTap: () => shell.goBranch(1, initialLocation: shell.currentIndex == 1),
+                    ),
+                    _BarItem(
+                      icon: Icons.check_box_outlined,
+                      activeIcon: Icons.check_box_rounded,
+                      label: 'Tâches',
+                      isSelected: shell.currentIndex == 2,
+                      onTap: () => shell.goBranch(2, initialLocation: shell.currentIndex == 2),
+                    ),
+                    _BarItem(
+                      icon: Icons.mail_outline_rounded,
+                      activeIcon: Icons.mail_rounded,
+                      label: 'Emails',
+                      isSelected: shell.currentIndex == 3,
+                      onTap: () => shell.goBranch(3, initialLocation: shell.currentIndex == 3),
+                    ),
+                    _BarItem(
+                      icon: Icons.settings_outlined,
+                      activeIcon: Icons.settings_rounded,
+                      label: 'Paramètres',
+                      isSelected: shell.currentIndex == 4,
+                      onTap: () => shell.goBranch(4, initialLocation: shell.currentIndex == 4),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
-        child: NavigationBarTheme(
-          data: NavigationBarThemeData(
-            backgroundColor: Colors.transparent,
-            indicatorColor: const Color(0x334E78FF),
-            labelTextStyle: WidgetStateProperty.resolveWith((states) {
-              final isSelected = states.contains(WidgetState.selected);
-              return TextStyle(
-                color: isSelected ? const Color(0xFF4E78FF) : const Color(0xFF6B76A0),
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-              );
-            }),
-            iconTheme: WidgetStateProperty.resolveWith((states) {
-              final isSelected = states.contains(WidgetState.selected);
-              return IconThemeData(
-                color: isSelected ? const Color(0xFF4E78FF) : const Color(0xFF6B76A0),
-                size: 22,
-              );
-            }),
+      ),
+    );
+  }
+}
+
+class _BarItem extends StatelessWidget {
+  const _BarItem({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutCubic,
+          margin: const EdgeInsets.symmetric(horizontal: 2),
+          padding: EdgeInsets.symmetric(
+            horizontal: isSelected ? 4 : 2,
+            vertical: 5,
           ),
-          child: NavigationBar(
-            height: 64,
-            elevation: 0,
-            selectedIndex: shell.currentIndex,
-            onDestinationSelected: (i) =>
-                shell.goBranch(i, initialLocation: i == shell.currentIndex),
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home_rounded),
-                label: 'Accueil',
+          decoration: BoxDecoration(
+            color: isSelected ? const Color(0xFF1B2666) : Colors.transparent,
+            borderRadius: BorderRadius.circular(20),
+            border: isSelected
+                ? Border.all(color: const Color(0xFF3861FB).withValues(alpha: 0.4), width: 1)
+                : null,
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF3861FB).withValues(alpha: 0.25),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                isSelected ? activeIcon : icon,
+                color: isSelected ? const Color(0xFF4E78FF) : const Color(0xFF6B7AA8),
+                size: 21,
               ),
-              NavigationDestination(
-                icon: Icon(Icons.calendar_today_outlined),
-                selectedIcon: Icon(Icons.calendar_today_rounded),
-                label: 'Événements',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.check_box_outlined),
-                selectedIcon: Icon(Icons.check_box_rounded),
-                label: 'Tâches',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.mail_outline_rounded),
-                selectedIcon: Icon(Icons.mail_rounded),
-                label: 'Emails',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.settings_outlined),
-                selectedIcon: Icon(Icons.settings_rounded),
-                label: 'Paramètres',
+              const SizedBox(height: 3),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  style: TextStyle(
+                    color: isSelected ? const Color(0xFF93C5FD) : const Color(0xFF6B7AA8),
+                    fontSize: 10,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  ),
+                ),
               ),
             ],
           ),

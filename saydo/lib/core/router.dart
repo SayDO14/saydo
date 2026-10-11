@@ -17,6 +17,7 @@ import '../features/settings/settings_screen.dart';
 import '../features/shell/app_shell.dart';
 import '../features/tasks/tasks_screen.dart';
 
+
 /// Permet à go_router de réexécuter `redirect` dès que l'état d'authentification change.
 class _AuthRefresh extends ChangeNotifier {
   _AuthRefresh(Stream<dynamic> stream) {
@@ -37,19 +38,26 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.onDispose(refresh.dispose);
 
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/onboarding',
     refreshListenable: refresh,
     redirect: (context, state) {
       final signedIn = repo.currentSession != null;
       final onLogin = state.matchedLocation == '/login';
       final onOnboarding = state.matchedLocation == '/onboarding';
 
-      if (!signedIn) {
-        if (onOnboarding) return null;
-        return onLogin ? null : '/onboarding';
+      // 1. Si l'utilisateur est connecté -> entre DIRECTEMENT dans l'app SayDo
+      // Il ne revient JAMAIS sur la présentation ni sur le login
+      if (signedIn) {
+        if (onLogin || onOnboarding) return '/';
+        return null;
       }
-      if (onLogin || onOnboarding) return '/';
-      return null;
+
+      // 2. Si l'utilisateur n'est PAS connecté :
+      // Les pages d'explication (onboarding) sont AVANT le login/signup
+      if (onLogin || onOnboarding) return null;
+
+      // Par défaut : commencer par les pages d'explication
+      return '/onboarding';
     },
     routes: [
       StatefulShellRoute.indexedStack(
