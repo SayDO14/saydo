@@ -23,7 +23,7 @@ Future<void> main() async {
   );
 
   final prefs = await SharedPreferences.getInstance();
-
+  
   runApp(
     ProviderScope(
       overrides: [
@@ -36,12 +36,15 @@ Future<void> main() async {
 
 class SayDoApp extends ConsumerWidget {
   const SayDoApp({super.key});
-
+  
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    
+
     return MaterialApp.router(
       title: 'SayDo',
       theme: buildTheme(Brightness.light),
+      debugShowCheckedModeBanner: false, 
       darkTheme: buildTheme(Brightness.dark),
       routerConfig: ref.watch(routerProvider),
     );
