@@ -1,0 +1,28 @@
+# Secrets
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Audio de test
+*.mp3
+*.m4a
+*.wav
+
+# Éditeur / système
+.vscode/
+.idea/
+.DS_Store
+
+dart_tool/
+.dart_tool/
+build/
+*.log
+
+**/.dart_tool/
+**/.flutter-plugins-dependencies
