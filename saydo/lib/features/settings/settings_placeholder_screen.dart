@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/widgets.dart';
+import 'package:saydo/l10n/app_localizations.dart';
 
 class SettingsPlaceholderScreen extends StatelessWidget {
   const SettingsPlaceholderScreen({super.key});
@@ -8,10 +9,10 @@ class SettingsPlaceholderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Paramètres')),
-      body: const EmptyView(
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.navSettings)),
+      body: EmptyView(
         icon: Icons.settings_outlined,
-        message: 'Paramètres du compte et préférences...',
+        message: AppLocalizations.of(context)!.placeholderMessage,
       ),
     );
   }

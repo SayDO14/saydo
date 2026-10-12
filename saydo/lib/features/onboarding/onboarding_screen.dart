@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:saydo/l10n/app_localizations.dart';
 
 const _onboardingSeenKey = 'onboarding_seen';
 
@@ -124,10 +125,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           child: InkWell(
                             onTap: _finish,
                             borderRadius: BorderRadius.circular(20),
-                            child: const Padding(
+                            child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 18, vertical: 7),
                               child: Text(
-                                'Passer',
+                                AppLocalizations.of(context)!.onbSkip,
                                 style: TextStyle(
                                   color: Color(0xFF94A3B8),
                                   fontSize: 14,
@@ -192,7 +193,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            _currentPage == 2 ? 'Get Started' : 'Next',
+                            _currentPage == 2 ? AppLocalizations.of(context)!.onbGetStarted : AppLocalizations.of(context)!.next,
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -244,13 +245,13 @@ class _SplashSlide extends StatelessWidget {
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: const Color(0xFF23367C), width: 1.2),
             ),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.auto_awesome, size: 14, color: Color(0xFF4E78FF)),
                 SizedBox(width: 8),
                 Text(
-                  'AI VOICE ASSISTANT',
+                  AppLocalizations.of(context)!.onbTag,
                   style: TextStyle(
                     color: Color(0xFF8BA5FF),
                     fontSize: 12,
@@ -307,13 +308,13 @@ class _SplashSlide extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.mic, size: 14, color: Color(0xFF4E78FF)),
                         SizedBox(width: 6),
                         Text(
-                          '"Rappelle-moi..."',
+                          AppLocalizations.of(context)!.onbBubble,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 13,
@@ -343,13 +344,13 @@ class _SplashSlide extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.check_circle_rounded, size: 15, color: Color(0xFF10B981)),
                         SizedBox(width: 6),
                         Text(
-                          'Tâche créée',
+                          AppLocalizations.of(context)!.onbTaskCreated,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 13,
@@ -379,8 +380,8 @@ class _SplashSlide extends StatelessWidget {
           const SizedBox(height: 8),
 
           // Subtitle / Slogan
-          const Text(
-            'Say it. Do it.',
+          Text(
+            AppLocalizations.of(context)!.onbHeadline,
             style: TextStyle(
               fontSize: 20,
               color: Color(0xFF3861FB),
@@ -391,8 +392,8 @@ class _SplashSlide extends StatelessWidget {
           const SizedBox(height: 12),
 
           // Description
-          const Text(
-            'Votre assistant personnel intelligent.\nParlez naturellement, SayDo\ntransforme chaque mot en action.',
+          Text(
+            AppLocalizations.of(context)!.onbDesc1,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 15,
@@ -558,8 +559,8 @@ class _WelcomeSlide extends StatelessWidget {
 
           const Spacer(flex: 1),
 
-          const Text(
-            'WELCOME',
+          Text(
+            AppLocalizations.of(context)!.onbWelcome,
             style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -569,8 +570,8 @@ class _WelcomeSlide extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          const Text(
-            'Just say it out loud,\nSayDo manages your schedule.',
+          Text(
+            AppLocalizations.of(context)!.onbDesc2,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 15,
@@ -645,13 +646,13 @@ class _SmartUnderstandingSlide extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: const Color(0xFF222B6E)),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.mail_outline_rounded, size: 14, color: _accent),
                         SizedBox(width: 4),
                         Text(
-                          'Emails',
+                          AppLocalizations.of(context)!.navEmails,
                           style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
                         ),
                       ],
@@ -695,13 +696,13 @@ class _SmartUnderstandingSlide extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: const Color(0xFF222B6E)),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.check_box_outlined, size: 14, color: Color(0xFF10B981)),
                         SizedBox(width: 4),
                         Text(
-                          'Tâches',
+                          AppLocalizations.of(context)!.navTasks,
                           style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
                         ),
                       ],
@@ -720,13 +721,13 @@ class _SmartUnderstandingSlide extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: const Color(0xFF222B6E)),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.calendar_today_rounded, size: 14, color: Color(0xFFFBBF24)),
                         SizedBox(width: 4),
                         Text(
-                          'Agenda',
+                          AppLocalizations.of(context)!.onbAgenda,
                           style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
                         ),
                       ],
@@ -739,8 +740,8 @@ class _SmartUnderstandingSlide extends StatelessWidget {
 
           const Spacer(flex: 1),
 
-          const Text(
-            'SMART\nUNDERSTANDING',
+          Text(
+            AppLocalizations.of(context)!.onbSmart,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 26,
@@ -752,8 +753,8 @@ class _SmartUnderstandingSlide extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          const Text(
-            'Mix Darija, French, and English naturally.\nSayDo extracts dates, tasks, and people effortlessly.',
+          Text(
+            AppLocalizations.of(context)!.onbDesc3,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,

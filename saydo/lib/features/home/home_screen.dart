@@ -9,6 +9,7 @@ import '../emails/emails_repository.dart';
 import '../events/events_repository.dart';
 import '../tasks/tasks_repository.dart';
 import '../voice/voice_controller.dart';
+import 'package:saydo/l10n/app_localizations.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -73,8 +74,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         }
         if (outcome == ProposalOutcome.saved && context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text('Saved. It will sync to Google shortly.')),
+            SnackBar(
+                content: Text(AppLocalizations.of(context)!.homeSaved)),
           );
         }
       }
@@ -216,10 +217,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         children: [
                           // Title
                           RichText(
-                            text: const TextSpan(
+                            text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: 'Parlez à ',
+                                  text: AppLocalizations.of(context)!.homeSpeakTo,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 22,
@@ -377,14 +378,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                 const EdgeInsets.symmetric(horizontal: 32),
                             child: Text(
                               voice.status == VoiceStatus.error
-                                  ? (voice.error ?? 'Something went wrong')
+                                  ? (voice.error ?? AppLocalizations.of(context)!.errorGeneric)
                                   : voice.status == VoiceStatus.recording
-                                      ? 'En écoute... appuyez pour envoyer'
+                                      ? AppLocalizations.of(context)!.homeListening
                                       : voice.status == VoiceStatus.uploading
-                                          ? 'Traitement en cours...'
+                                          ? AppLocalizations.of(context)!.homeProcessing
                                           : voice.status == VoiceStatus.done
-                                              ? 'Appuyez pour recommencer'
-                                              : 'Créez un événement ou une tâche\nsimplement avec votre voix.',
+                                              ? AppLocalizations.of(context)!.homeTapRetry
+                                              : AppLocalizations.of(context)!.homeDefaultHint,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: voice.status == VoiceStatus.error
@@ -498,14 +499,14 @@ class _ResultPreview extends StatelessWidget {
     final r = voice.result;
     if (r == null) return const SizedBox.shrink();
     final lines = <String>[
-      'Vous avez dit : ${r.transcript}',
-      if (r.needsInfo) 'Agent demande : ${r.question}',
+      AppLocalizations.of(context)!.previewSaid('${r.transcript}'),
+      if (r.needsInfo) AppLocalizations.of(context)!.previewAgentAsks('${r.question}'),
       if (r.isProposal) ...[
-        'Type : ${r.type}',
-        if (r.title != null) 'Titre : ${r.title}',
-        if (r.date != null) 'Date : ${r.date}',
-        if (r.time != null) 'Heure : ${r.time}',
-        if (r.people.isNotEmpty) 'Personnes : ${r.people.join(', ')}',
+        AppLocalizations.of(context)!.previewType('${r.type}'),
+        if (r.title != null) AppLocalizations.of(context)!.previewTitle('${r.title}'),
+        if (r.date != null) AppLocalizations.of(context)!.previewDate('${r.date}'),
+        if (r.time != null) AppLocalizations.of(context)!.previewTime('${r.time}'),
+        if (r.people.isNotEmpty) AppLocalizations.of(context)!.previewPeople(r.people.join(', ')),
       ],
     ];
     return Container(

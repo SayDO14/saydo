@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:saydo/l10n/app_localizations.dart';
 /// Barre de navigation inférieure flottante style glassmorphism moderne (conforme Photo 3).
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.shell});
@@ -49,35 +49,35 @@ class AppShell extends StatelessWidget {
                     _BarItem(
                       icon: Icons.home_outlined,
                       activeIcon: Icons.home_rounded,
-                      label: 'Accueil',
+                      label: AppLocalizations.of(context)!.navHome,
                       isSelected: shell.currentIndex == 0,
                       onTap: () => shell.goBranch(0, initialLocation: shell.currentIndex == 0),
                     ),
                     _BarItem(
                       icon: Icons.calendar_today_outlined,
                       activeIcon: Icons.calendar_today_rounded,
-                      label: 'Événements',
+                      label: AppLocalizations.of(context)!.navEvents,
                       isSelected: shell.currentIndex == 1,
                       onTap: () => shell.goBranch(1, initialLocation: shell.currentIndex == 1),
                     ),
                     _BarItem(
                       icon: Icons.check_box_outlined,
                       activeIcon: Icons.check_box_rounded,
-                      label: 'Tâches',
+                      label: AppLocalizations.of(context)!.navTasks,
                       isSelected: shell.currentIndex == 2,
                       onTap: () => shell.goBranch(2, initialLocation: shell.currentIndex == 2),
                     ),
                     _BarItem(
                       icon: Icons.mail_outline_rounded,
                       activeIcon: Icons.mail_rounded,
-                      label: 'Emails',
+                      label: AppLocalizations.of(context)!.navEmails,
                       isSelected: shell.currentIndex == 3,
                       onTap: () => shell.goBranch(3, initialLocation: shell.currentIndex == 3),
                     ),
                     _BarItem(
                       icon: Icons.settings_outlined,
                       activeIcon: Icons.settings_rounded,
-                      label: 'Paramètres',
+                      label: AppLocalizations.of(context)!.navSettings,
                       isSelected: shell.currentIndex == 4,
                       onTap: () => shell.goBranch(4, initialLocation: shell.currentIndex == 4),
                     ),

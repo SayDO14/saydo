@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:saydo/l10n/app_localizations.dart';
 
 class SecurityScreen extends StatefulWidget {
   const SecurityScreen({super.key});
@@ -40,8 +41,8 @@ class _SecurityScreenState extends State<SecurityScreen> {
               children: [
                 Row(
                   children: [
-                    const Text(
-                      'Changer le mot de passe',
+                    Text(
+                      AppLocalizations.of(context)!.securityChangePassword,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -56,8 +57,8 @@ class _SecurityScreenState extends State<SecurityScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Nouveau mot de passe',
+                Text(
+                  AppLocalizations.of(context)!.securityNewPassword,
                   style: TextStyle(color: Color(0xFF8E9AC5), fontSize: 13),
                 ),
                 const SizedBox(height: 6),
@@ -66,7 +67,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                   obscureText: true,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: 'Minimum 6 caractères',
+                    hintText: AppLocalizations.of(context)!.securityMin6,
                     hintStyle: const TextStyle(color: Color(0xFF4B5380)),
                     filled: true,
                     fillColor: const Color(0xFF0B0D22),
@@ -81,8 +82,8 @@ class _SecurityScreenState extends State<SecurityScreen> {
                   ),
                 ),
                 const SizedBox(height: 14),
-                const Text(
-                  'Confirmer le mot de passe',
+                Text(
+                  AppLocalizations.of(context)!.fieldConfirmPassword,
                   style: TextStyle(color: Color(0xFF8E9AC5), fontSize: 13),
                 ),
                 const SizedBox(height: 6),
@@ -91,7 +92,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                   obscureText: true,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: 'Répétez le mot de passe',
+                    hintText: AppLocalizations.of(context)!.securityRepeat,
                     hintStyle: const TextStyle(color: Color(0xFF4B5380)),
                     filled: true,
                     fillColor: const Color(0xFF0B0D22),
@@ -120,11 +121,11 @@ class _SecurityScreenState extends State<SecurityScreen> {
                           final p1 = pwdCtrl.text.trim();
                           final p2 = confirmCtrl.text.trim();
                           if (p1.length < 6) {
-                            setModalState(() => errorText = 'Le mot de passe doit faire au moins 6 caractères.');
+                            setModalState(() => errorText = AppLocalizations.of(context)!.passwordTooShort);
                             return;
                           }
                           if (p1 != p2) {
-                            setModalState(() => errorText = 'Les mots de passe ne correspondent pas.');
+                            setModalState(() => errorText = AppLocalizations.of(context)!.passwordsMismatch);
                             return;
                           }
                           setModalState(() {
@@ -139,8 +140,8 @@ class _SecurityScreenState extends State<SecurityScreen> {
                             if (mounted && ctx.mounted) {
                               Navigator.pop(ctx);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('✅ Mot de passe mis à jour avec succès !'),
+                                SnackBar(
+                                  content: Text(AppLocalizations.of(context)!.securityPasswordUpdated),
                                   backgroundColor: Color(0xFF13193E),
                                 ),
                               );
@@ -148,7 +149,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                           } catch (e) {
                             setModalState(() {
                               saving = false;
-                              errorText = 'Erreur : $e';
+                              errorText = AppLocalizations.of(context)!.errorWithMessage('$e');
                             });
                           }
                         },
@@ -163,8 +164,8 @@ class _SecurityScreenState extends State<SecurityScreen> {
                           width: 20,
                           child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                         )
-                      : const Text(
-                          'Mettre à jour le mot de passe',
+                      : Text(
+                          AppLocalizations.of(context)!.securityUpdatePassword,
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                 ),
@@ -182,20 +183,20 @@ class _SecurityScreenState extends State<SecurityScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF131533),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Changer de compte ?', style: TextStyle(color: Colors.white)),
-        content: const Text(
-          'Vous serez déconnecté de ce compte afin de vous connecter avec un autre compte.',
+        title: Text(AppLocalizations.of(context)!.securitySwitchTitle, style: TextStyle(color: Colors.white)),
+        content: Text(
+          AppLocalizations.of(context)!.securitySwitchBody,
           style: TextStyle(color: Color(0xFF8E9AC5)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Annuler', style: TextStyle(color: Colors.white70)),
+            child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: Colors.white70)),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(backgroundColor: const Color(0xFF2853DE)),
-            child: const Text('Continuer'),
+            child: Text(AppLocalizations.of(context)!.continueLabel),
           ),
         ],
       ),
@@ -213,20 +214,20 @@ class _SecurityScreenState extends State<SecurityScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF131533),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Se déconnecter ?', style: TextStyle(color: Colors.white)),
-        content: const Text(
-          'Voulez-vous vraiment vous déconnecter de SayDo ?',
+        title: Text(AppLocalizations.of(context)!.securityLogoutTitle, style: TextStyle(color: Colors.white)),
+        content: Text(
+          AppLocalizations.of(context)!.securityLogoutBody,
           style: TextStyle(color: Color(0xFF8E9AC5)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Annuler', style: TextStyle(color: Colors.white70)),
+            child: Text(AppLocalizations.of(context)!.cancel, style: TextStyle(color: Colors.white70)),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(backgroundColor: const Color(0xFFE57373)),
-            child: const Text('Déconnexion'),
+            child: Text(AppLocalizations.of(context)!.logoutAction),
           ),
         ],
       ),
@@ -294,7 +295,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                     const SizedBox(width: 16),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           'SayDo',
                           style: TextStyle(
@@ -305,7 +306,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                           ),
                         ),
                         Text(
-                          'Compte et sécurité',
+                          AppLocalizations.of(context)!.settingsAccountSecurity,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -321,9 +322,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 // Card 1: Changer de compte
                 _SecurityCard(
                   icon: Icons.person_outline_rounded,
-                  title: 'Changer de compte',
+                  title: AppLocalizations.of(context)!.securitySwitchAccount,
                   subtitle:
-                      'Se déconnecter de ce compte pour vous connecter avec un autre compte.',
+                      AppLocalizations.of(context)!.securitySwitchSub,
                   onTap: _switchAccount,
                 ),
                 const SizedBox(height: 14),
@@ -331,9 +332,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 // Card 2: Changer le mot de passe
                 _SecurityCard(
                   icon: Icons.lock_outline_rounded,
-                  title: 'Changer le mot de passe',
+                  title: AppLocalizations.of(context)!.securityChangePassword,
                   subtitle:
-                      'Mettez à jour votre mot de passe pour plus de sécurité.',
+                      AppLocalizations.of(context)!.securityChangePasswordSub,
                   onTap: _showChangePasswordDialog,
                 ),
                 const SizedBox(height: 14),
@@ -362,8 +363,8 @@ class _SecurityScreenState extends State<SecurityScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'E-mail',
+                            Text(
+                              AppLocalizations.of(context)!.fieldEmail,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -380,8 +381,8 @@ class _SecurityScreenState extends State<SecurityScreen> {
                               ),
                             ),
                             const SizedBox(height: 6),
-                            const Text(
-                              'L\'adresse e-mail ne peut pas être modifiée. Pour utiliser une autre adresse, veuillez changer de compte.',
+                            Text(
+                              AppLocalizations.of(context)!.securityEmailLocked,
                               style: TextStyle(
                                 color: Color(0xFF7E89B5),
                                 fontSize: 12,
@@ -409,7 +410,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Icon(
                           Icons.logout_rounded,
                           color: Colors.white70,
@@ -417,7 +418,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
                         ),
                         SizedBox(width: 10),
                         Text(
-                          'Se déconnecter',
+                          AppLocalizations.of(context)!.securityLogoutButton,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,

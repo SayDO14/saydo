@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:saydo/l10n/app_localizations.dart';
+import '../../core/locale.dart';
 
 const _timezoneKey = 'setting_timezone';
 const _languageKey = 'setting_language';
@@ -23,14 +26,16 @@ const supportedLanguages = [
   {'code': 'ar', 'label': 'العربية'},
 ];
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+
+
   String _timezone = 'Afrique/Algiers';
   String _language = 'fr';
   bool _notifications = true;
@@ -119,7 +124,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           const SizedBox(width: 16),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            children: [
                               Text(
                                 'SayDo',
                                 style: TextStyle(
@@ -130,7 +135,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                               ),
                               Text(
-                                'Paramètres',
+                                AppLocalizations.of(context)!.navSettings,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -146,8 +151,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // 1. Profil
                       _SettingsItemCard(
                         icon: Icons.person_outline_rounded,
-                        title: 'Profil',
-                        subtitle: 'Nom, photo, bio',
+                        title: AppLocalizations.of(context)!.settingsProfile,
+                        subtitle: AppLocalizations.of(context)!.settingsProfileSub,
                         onTap: () => context.push('/settings/profile'),
                       ),
                       const SizedBox(height: 12),
@@ -155,8 +160,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // 2. Compte et sécurité
                       _SettingsItemCard(
                         icon: Icons.lock_outline_rounded,
-                        title: 'Compte et sécurité',
-                        subtitle: 'Changer de compte, mot de passe',
+                        title: AppLocalizations.of(context)!.settingsAccountSecurity,
+                        subtitle: AppLocalizations.of(context)!.settingsAccountSecuritySub,
                         onTap: () => context.push('/settings/security'),
                       ),
                       const SizedBox(height: 12),
@@ -164,7 +169,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // 3. Langue
                       _SettingsItemCard(
                         icon: Icons.language_rounded,
-                        title: 'Langue',
+                        title: AppLocalizations.of(context)!.language,
                         subtitle: _languageLabel,
                         onTap: () => _pickLanguage(context),
                       ),
@@ -173,7 +178,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // 4. Fuseau horaire
                       _SettingsItemCard(
                         icon: Icons.access_time_rounded,
-                        title: 'Fuseau horaire',
+                        title: AppLocalizations.of(context)!.settingsTimezone,
                         subtitle: _timezone,
                         onTap: () => _pickTimezone(context),
                       ),
@@ -196,9 +201,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               size: 22,
                             ),
                             const SizedBox(width: 14),
-                            const Expanded(
+                            Expanded(
                               child: Text(
-                                'Notifications',
+                                AppLocalizations.of(context)!.settingsNotifications,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
@@ -226,7 +231,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // 6. Calendrier connecté
                       _SettingsItemCard(
                         icon: Icons.calendar_today_outlined,
-                        title: 'Calendrier connecté',
+                        title: AppLocalizations.of(context)!.settingsCalendar,
                         subtitle: 'Google Calendar',
                         onTap: () => _showCalendarInfo(context),
                       ),
@@ -235,7 +240,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // 7. Confidentialité et sécurité
                       _SettingsItemCard(
                         icon: Icons.shield_outlined,
-                        title: 'Confidentialité et sécurité',
+                        title: AppLocalizations.of(context)!.settingsPrivacy,
                         onTap: () => _showPrivacyInfo(context),
                       ),
                       const SizedBox(height: 12),
@@ -243,7 +248,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // 8. Aide et support
                       _SettingsItemCard(
                         icon: Icons.help_outline_rounded,
-                        title: 'Aide et support',
+                        title: AppLocalizations.of(context)!.settingsHelp,
                         onTap: () => _showHelpInfo(context),
                       ),
                       const SizedBox(height: 40),
@@ -269,8 +274,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Fuseau horaire',
+                Text(
+                  AppLocalizations.of(context)!.settingsTimezone,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -322,8 +327,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Langue de l\'application',
+                 Text(
+                  AppLocalizations.of(ctx)!.appLanguage,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -357,10 +362,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
 
     if (picked != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_languageKey, picked);
-      setState(() => _language = picked);
-    }
+  await ref.read(localeProvider.notifier).setLanguage(picked);
+  setState(() => _language = picked);
+}
   }
 
   void _showCalendarInfo(BuildContext context) {
@@ -369,15 +373,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF131533),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Calendrier synchronisé', style: TextStyle(color: Colors.white)),
-        content: const Text(
-          'Vos événements vocaux confirmés sont automatiquement synchronisés vers Google Calendar.',
+        title: Text(AppLocalizations.of(context)!.calendarSyncedTitle, style: TextStyle(color: Colors.white)),
+        content: Text(
+          AppLocalizations.of(context)!.calendarSyncedBody,
           style: TextStyle(color: Color(0xFF8E9AC5)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Compris', style: TextStyle(color: Color(0xFF4E78FF))),
+            child: Text(AppLocalizations.of(context)!.gotIt, style: TextStyle(color: Color(0xFF4E78FF))),
           ),
         ],
       ),
@@ -390,15 +394,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF131533),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Confidentialité & Sécurité', style: TextStyle(color: Colors.white)),
-        content: const Text(
-          'SayDo respecte votre vie privée. Vos enregistrements audio sont transcrits puis traités de manière sécurisée sans être revendus ni partagés à des tiers.',
+        title: Text(AppLocalizations.of(context)!.privacyTitle, style: TextStyle(color: Colors.white)),
+        content: Text(
+          AppLocalizations.of(context)!.privacyBody,
           style: TextStyle(color: Color(0xFF8E9AC5)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Fermer', style: TextStyle(color: Color(0xFF4E78FF))),
+            child: Text(AppLocalizations.of(context)!.close, style: TextStyle(color: Color(0xFF4E78FF))),
           ),
         ],
       ),
@@ -411,15 +415,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF131533),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Aide et support', style: TextStyle(color: Colors.white)),
-        content: const Text(
-          'SayDo comprend le Français, la Darija algérienne et l\'Anglais.\n\nAppuyez sur le micro et parlez naturellement pour créer des réunions, des tâches ou envoyer des e-mails !',
+        title: Text(AppLocalizations.of(context)!.settingsHelp, style: TextStyle(color: Colors.white)),
+        content: Text(
+          AppLocalizations.of(context)!.helpBody,
           style: TextStyle(color: Color(0xFF8E9AC5)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Super !', style: TextStyle(color: Color(0xFF4E78FF))),
+            child: Text(AppLocalizations.of(context)!.great, style: TextStyle(color: Color(0xFF4E78FF))),
           ),
         ],
       ),

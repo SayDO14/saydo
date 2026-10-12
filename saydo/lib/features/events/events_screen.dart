@@ -5,6 +5,7 @@ import '../../core/date_format.dart';
 import '../voice/voice_sheet.dart';
 import 'event_item.dart';
 import 'events_repository.dart';
+import 'package:saydo/l10n/app_localizations.dart';
 
 // ── Design tokens ──────────────────────────────────────────────────────────────
 const _bg         = Color(0xFF070818);
@@ -97,10 +98,10 @@ class EventsScreen extends ConsumerWidget {
                 ),
 
                 // ── Page title ───────────────────────────────────────
-                const Padding(
+                Padding(
                   padding: EdgeInsets.fromLTRB(20, 18, 20, 2),
                   child: Text(
-                    'Événements',
+                    AppLocalizations.of(context)!.navEvents,
                     style: TextStyle(
                       color: _textPrimary,
                       fontSize: 28,
@@ -108,10 +109,10 @@ class EventsScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Text(
-                    'Vos rendez-vous et tâches à venir',
+                    AppLocalizations.of(context)!.eventsSubtitle,
                     style: TextStyle(color: _textSecondary, fontSize: 13),
                   ),
                 ),
@@ -131,14 +132,14 @@ class EventsScreen extends ConsumerWidget {
                               color: _textSecondary, size: 48),
                           const SizedBox(height: 12),
                           Text(
-                            'Impossible de charger les événements.\n$e',
+                            AppLocalizations.of(context)!.eventsLoadError('$e'),
                             textAlign: TextAlign.center,
                             style: const TextStyle(color: _textSecondary),
                           ),
                           const SizedBox(height: 16),
                           FilledButton(
                             onPressed: () => ref.invalidate(eventsProvider),
-                            child: const Text('Réessayer'),
+                            child: Text(AppLocalizations.of(context)!.retry),
                           ),
                         ],
                       ),
@@ -220,8 +221,8 @@ class _EmptyState extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Aucun événement pour l\'instant.',
+          Text(
+            AppLocalizations.of(context)!.eventsEmpty,
             style: TextStyle(
                 color: _textPrimary,
                 fontSize: 16,
@@ -230,8 +231,8 @@ class _EmptyState extends StatelessWidget {
           const SizedBox(height: 6),
           GestureDetector(
             onTap: onVoice,
-            child: const Text(
-              'Appuyez sur le micro pour en dicter un.',
+            child: Text(
+              AppLocalizations.of(context)!.eventsEmptyHint,
               style: TextStyle(
                 color: _accent,
                 fontSize: 13,
@@ -284,8 +285,8 @@ class _EventsListState extends State<_EventsList> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  const Text(
-                    'Tous les événements à venir',
+                  Text(
+                    AppLocalizations.of(context)!.eventsAllUpcoming,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -340,11 +341,11 @@ class _EventsListState extends State<_EventsList> {
         children: [
           if (upcoming.isNotEmpty) ...[
             _SectionHeader(
-              label: 'À venir',
+              label: AppLocalizations.of(context)!.upcoming,
               count: upcoming.length,
               actionLabel: upcoming.length > 3
-                  ? (_showAllUpcoming ? 'Réduire' : 'Voir tout')
-                  : 'Voir tout',
+                  ? (_showAllUpcoming ? AppLocalizations.of(context)!.showLess : AppLocalizations.of(context)!.showAll)
+                  : AppLocalizations.of(context)!.showAll,
               onAction: () {
                 if (upcoming.length > 3) {
                   setState(() => _showAllUpcoming = !_showAllUpcoming);
@@ -358,7 +359,7 @@ class _EventsListState extends State<_EventsList> {
           ],
           if (past.isNotEmpty) ...[
             const SizedBox(height: 20),
-            _SectionHeader(label: 'Passés', count: past.length),
+            _SectionHeader(label: AppLocalizations.of(context)!.past, count: past.length),
             const SizedBox(height: 10),
             ...past.map((e) => _EventCard(event: e, isPast: true)),
           ],
@@ -450,7 +451,7 @@ class _EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final month = monthShort(event.startAt).toUpperCase();
     final timeStr = event.allDay
-        ? 'Toute la journée'
+        ? AppLocalizations.of(context)!.allDay
         : formatClock(event.startAt);
     final subtitle = event.people.isEmpty
         ? timeStr
@@ -647,8 +648,8 @@ class _EventDetailSheet extends StatelessWidget {
                       ? Icons.cloud_done_outlined
                       : Icons.cloud_upload_outlined,
                   event.isSynced
-                      ? 'Synchronisé avec Google Agenda'
-                      : 'En attente de synchronisation',
+                      ? AppLocalizations.of(context)!.eventSynced
+                      : AppLocalizations.of(context)!.eventPendingSync,
                 ),
               ],
             ),

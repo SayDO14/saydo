@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:saydo/l10n/app_localizations.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -20,7 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   bool _loading = true;
   bool _saving = false;
   bool _showSuccessNotif = false;
-  String _successMsg = 'Le nom a ete modifie avec succes.';
+  String _successMsg = '';
 
   late AnimationController _successAnimCtrl;
   late Animation<double> _successAnim;
@@ -130,7 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         setState(() {
           _saving = false;
           _showSuccessNotif = true;
-          _successMsg = 'Le nom a ete modifie avec succes.';
+          _successMsg = AppLocalizations.of(context)!.profileNameUpdated;
         });
         _successAnimCtrl.forward(from: 0);
       }
@@ -139,7 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur : $e'),
+            content: Text(AppLocalizations.of(context)!.errorWithMessage('$e')),
             backgroundColor: const Color(0xFFE57373),
           ),
         );
@@ -160,8 +161,8 @@ class _ProfileScreenState extends State<ProfileScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Photo de profil',
+              Text(
+                AppLocalizations.of(context)!.profilePhoto,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -180,17 +181,17 @@ class _ProfileScreenState extends State<ProfileScreen>
                   child: const Icon(Icons.smart_toy_rounded,
                       color: Color(0xFF00E5FF), size: 22),
                 ),
-                title: const Text('Avatar Robot SayDo',
+                title: Text(AppLocalizations.of(context)!.profileAvatarRobot,
                     style: TextStyle(
                         color: Colors.white, fontWeight: FontWeight.w600)),
-                subtitle: const Text('Actuellement utilise',
+                subtitle: Text(AppLocalizations.of(context)!.profileCurrentlyUsed,
                     style:
                         TextStyle(color: Color(0xFF7E89B5), fontSize: 12)),
                 onTap: () {
                   Navigator.pop(ctx);
                   setState(() {
                     _showSuccessNotif = true;
-                    _successMsg = 'Avatar SayDo selectionne avec succes.';
+                    _successMsg = AppLocalizations.of(context)!.profileAvatarSelected;
                   });
                   _successAnimCtrl.forward(from: 0);
                 },
@@ -207,17 +208,17 @@ class _ProfileScreenState extends State<ProfileScreen>
                   child: const Icon(Icons.photo_library_outlined,
                       color: Colors.white70, size: 22),
                 ),
-                title: const Text('Choisir dans la galerie',
+                title: Text(AppLocalizations.of(context)!.profileChooseGallery,
                     style: TextStyle(
                         color: Colors.white, fontWeight: FontWeight.w600)),
-                subtitle: const Text('Importer une image personnelle',
+                subtitle: Text(AppLocalizations.of(context)!.profileImportImage,
                     style:
                         TextStyle(color: Color(0xFF7E89B5), fontSize: 12)),
                 onTap: () {
                   Navigator.pop(ctx);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Galerie photo bientot disponible'),
+                    SnackBar(
+                      content: Text(AppLocalizations.of(context)!.profileGallerySoon),
                       backgroundColor: Color(0xFF1B224E),
                     ),
                   );
@@ -301,7 +302,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
-                                    children: const [
+                                    children: [
                                       Text(
                                         'SayDo',
                                         style: TextStyle(
@@ -313,7 +314,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                       ),
                                       SizedBox(height: 2),
                                       Text(
-                                        'Profil',
+                                        AppLocalizations.of(context)!.settingsProfile,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 17,
@@ -431,8 +432,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'Nom',
+                                  Text(
+                                    AppLocalizations.of(context)!.fieldName,
                                     style: TextStyle(
                                       color: Color(0xFF8E9AC5),
                                       fontSize: 13,
@@ -458,8 +459,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         fontSize: 15,
                                         fontWeight: FontWeight.w600,
                                       ),
-                                      decoration: const InputDecoration(
-                                        hintText: 'Votre nom',
+                                      decoration: InputDecoration(
+                                        hintText: AppLocalizations.of(context)!.profileYourName,
                                         hintStyle: TextStyle(
                                             color: Color(0xFF4B5380)),
                                         border: InputBorder.none,
@@ -494,7 +495,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-                              children: const [
+                              children: [
                                 Icon(
                                   Icons.person_outline_rounded,
                                   color: Color(0xFF8E9AC5),
@@ -502,7 +503,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 ),
                                 SizedBox(width: 8),
                                 Text(
-                                  'Bio',
+                                  AppLocalizations.of(context)!.profileBio,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 15,
@@ -525,7 +526,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 height: 1.55,
                               ),
                               decoration: InputDecoration(
-                                hintText: 'Decrivez-vous brievement...',
+                                hintText: AppLocalizations.of(context)!.profileBioHint,
                                 hintStyle: const TextStyle(color: Color(0xFF4B5380)),
                                 filled: true,
                                 fillColor: const Color(0xFF101332),
@@ -571,7 +572,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             ),
                           ),
                           child: Row(
-                            children: const [
+                            children: [
                               Icon(
                                 Icons.image_outlined,
                                 color: Colors.white,
@@ -580,7 +581,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                               SizedBox(width: 14),
                               Expanded(
                                 child: Text(
-                                  'Photo de profil',
+                                  AppLocalizations.of(context)!.profilePhoto,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 15,
@@ -624,8 +625,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   strokeWidth: 2.5,
                                 ),
                               )
-                            : const Text(
-                                'Mettre a jour les informations',
+                            : Text(
+                                AppLocalizations.of(context)!.profileUpdate,
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
@@ -674,8 +675,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text(
-                                        'Profil mis a jour !',
+                                      Text(
+                                        AppLocalizations.of(context)!.profileUpdated,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 15,

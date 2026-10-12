@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'contact_sheet.dart';
 import 'contacts_repository.dart';
+import 'package:saydo/l10n/app_localizations.dart';
 
 class ContactsScreen extends ConsumerWidget {
   const ContactsScreen({super.key});
@@ -18,18 +19,18 @@ class ContactsScreen extends ConsumerWidget {
           borderRadius: BorderRadius.circular(20),
           side: const BorderSide(color: Color(0xFF222A60), width: 1.2),
         ),
-        title: const Text(
-          'Supprimer le contact ?',
+        title: Text(
+          AppLocalizations.of(context)!.contactsDeleteTitle,
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         content: Text(
-          '${c.name} (${c.email}) sera supprime. Les emails passes ne sont pas affectes.',
+          AppLocalizations.of(context)!.contactsDeleteBody(c.name, c.email),
           style: const TextStyle(color: Color(0xFF8E9AC5)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler',
+            child: Text(AppLocalizations.of(context)!.cancel,
                 style: TextStyle(color: Color(0xFF6B76A0))),
           ),
           FilledButton(
@@ -39,7 +40,7 @@ class ContactsScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(10)),
             ),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Supprimer'),
+            child: Text(AppLocalizations.of(context)!.delete),
           ),
         ],
       ),
@@ -51,7 +52,7 @@ class ContactsScreen extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur : $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errorWithMessage('$e'))),
         );
       }
     }
@@ -112,8 +113,8 @@ class ContactsScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      const Text(
-                        'Contacts',
+                      Text(
+                        AppLocalizations.of(context)!.contactsTitle,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 22,
@@ -141,7 +142,7 @@ class ContactsScreen extends ConsumerWidget {
                               color: Color(0xFF6B76A0), size: 48),
                           const SizedBox(height: 12),
                           Text(
-                            'Impossible de charger les contacts.\n$e',
+                            AppLocalizations.of(context)!.contactsLoadError('$e'),
                             textAlign: TextAlign.center,
                             style:
                                 const TextStyle(color: Color(0xFF8E9AC5)),
@@ -150,7 +151,7 @@ class ContactsScreen extends ConsumerWidget {
                           FilledButton(
                             onPressed: () =>
                                 ref.invalidate(contactsProvider),
-                            child: const Text('Reessayer'),
+                            child: Text(AppLocalizations.of(context)!.retry),
                           ),
                         ],
                       ),
@@ -176,16 +177,16 @@ class ContactsScreen extends ConsumerWidget {
                                       size: 34),
                                 ),
                                 const SizedBox(height: 16),
-                                const Text(
-                                  'Aucun contact pour l\'instant.',
+                                Text(
+                                  AppLocalizations.of(context)!.contactsEmpty,
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600),
                                 ),
                                 const SizedBox(height: 6),
-                                const Text(
-                                  'Ajoutez-en un ici, ou ils sont\nsauvegardes automatiquement\nlorsque vous envoyez un email.',
+                                Text(
+                                  AppLocalizations.of(context)!.contactsEmptyHint,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Color(0xFF6B76A0),

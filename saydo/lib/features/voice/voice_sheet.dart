@@ -6,6 +6,7 @@ import '../events/events_repository.dart';
 import '../tasks/tasks_repository.dart';
 import 'parse_result.dart';
 import 'voice_controller.dart';
+import 'package:saydo/l10n/app_localizations.dart';
 
 Future<void> showVoiceAssistant(BuildContext context, WidgetRef ref) async {
   ref.read(voiceControllerProvider.notifier).reset();
@@ -32,12 +33,12 @@ Future<void> showVoiceAssistant(BuildContext context, WidgetRef ref) async {
       ref.invalidate(tasksProvider);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Row(
               children: [
                 Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
                 SizedBox(width: 10),
-                Text('Enregistré avec succès ! 🎉'),
+                Text(AppLocalizations.of(context)!.voiceSaved),
               ],
             ),
             backgroundColor: Color(0xFF10B981),
@@ -149,12 +150,12 @@ class _VoiceSheetContentState extends ConsumerState<_VoiceSheetContent>
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'SayDo Vocal',
+                        AppLocalizations.of(context)!.voiceTitle,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -162,7 +163,7 @@ class _VoiceSheetContentState extends ConsumerState<_VoiceSheetContent>
                         ),
                       ),
                       Text(
-                        'Créez une tâche ou un rendez-vous',
+                        AppLocalizations.of(context)!.voiceSubtitle,
                         style: TextStyle(
                           color: Color(0xFF8E9AC5),
                           fontSize: 12,
@@ -259,14 +260,14 @@ class _VoiceSheetContentState extends ConsumerState<_VoiceSheetContent>
             // Status Text
             Text(
               voice.status == VoiceStatus.error
-                  ? (voice.error ?? 'Une erreur est survenue')
+                  ? (voice.error ?? AppLocalizations.of(context)!.errorGeneric)
                   : recording
-                      ? 'En écoute... Appuyez pour valider'
+                      ? AppLocalizations.of(context)!.voiceListening
                       : uploading
-                          ? 'Traitement en cours par SayDo...'
+                          ? AppLocalizations.of(context)!.voiceProcessing
                           : voice.status == VoiceStatus.done
-                              ? 'Analyse terminée'
-                              : 'Appuyez pour parler',
+                              ? AppLocalizations.of(context)!.voiceDone
+                              : AppLocalizations.of(context)!.voiceTapToSpeak,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: voice.status == VoiceStatus.error
@@ -281,10 +282,10 @@ class _VoiceSheetContentState extends ConsumerState<_VoiceSheetContent>
             // Hint
             Text(
               recording
-                  ? 'Parlez naturellement, SayDo s\'occupe du reste.'
+                  ? AppLocalizations.of(context)!.voiceSpeakNaturally
                   : uploading
-                      ? 'Reconnaissance vocale & extraction des détails...'
-                      : 'Ex: "Rendez-vous demain à 14h avec Sophie" ou "Acheter du lait"',
+                      ? AppLocalizations.of(context)!.voiceRecognizing
+                      : AppLocalizations.of(context)!.voiceExample,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Color(0xFF8E9AC5),
@@ -300,7 +301,7 @@ class _VoiceSheetContentState extends ConsumerState<_VoiceSheetContent>
                   backgroundColor: const Color(0xFF1D2866),
                   foregroundColor: Colors.white,
                 ),
-                child: const Text('Réessayer'),
+                child: Text(AppLocalizations.of(context)!.retry),
               ),
             ],
 

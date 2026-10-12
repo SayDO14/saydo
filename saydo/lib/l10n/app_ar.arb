@@ -1,0 +1,371 @@
+{
+  "@@locale": "ar",
+  "navHome": "الرئيسية",
+  "navEvents": "الأحداث",
+  "navTasks": "المهام",
+  "navEmails": "البريد",
+  "navSettings": "الإعدادات",
+  "emailsTitle": "البريد الإلكتروني",
+  "emailsSubtitle": "رسائلك بسرعة",
+  "filterAll": "الكل",
+  "filterReceived": "الواردة",
+  "filterSent": "المرسلة",
+  "emailsEmpty": "لا توجد رسائل حاليًا.",
+  "emailsEmptyHint": "أملِ رسالة باستخدام الميكروفون.",
+  "loadError": "تعذّر تحميل الرسائل.\n{error}",
+  "@loadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "retry": "إعادة المحاولة",
+  "statusSent": "مرسلة",
+  "statusReceived": "واردة",
+  "sentOn": "أُرسلت في {date} · {time}",
+  "@sentOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "createdOn": "أُنشئت في {date} · {time}",
+  "@createdOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "messageLabel": "الرسالة",
+  "language": "اللغة",
+  "appLanguage": "لغة التطبيق",
+  "cancel": "إلغاء",
+  "delete": "حذف",
+  "save": "حفظ",
+  "confirm": "تأكيد",
+  "required": "مطلوب",
+  "errorGeneric": "حدث خطأ ما",
+  "errorWithMessage": "خطأ: {error}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "saveError": "تعذّر الحفظ: {error}",
+  "@saveError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteError": "تعذّر الحذف: {error}",
+  "@deleteError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "fieldTitle": "العنوان",
+  "fieldNotes": "ملاحظات",
+  "fieldName": "الاسم",
+  "fieldEmail": "البريد الإلكتروني",
+  "fieldEmailAddress": "عنوان البريد الإلكتروني",
+  "fieldPassword": "كلمة المرور",
+  "fieldConfirmPassword": "تأكيد كلمة المرور",
+  "fieldFullName": "الاسم الكامل",
+  "fieldDate": "التاريخ",
+  "fieldTime": "الوقت",
+  "fieldDueDateOptional": "تاريخ الاستحقاق (اختياري)",
+  "fieldPeople": "الأشخاص (مفصولة بفاصلة)",
+  "fieldToName": "إلى (الاسم)",
+  "fieldSubject": "الموضوع",
+  "fieldMessage": "الرسالة",
+  "invalidEmail": "أدخل بريدًا إلكترونيًا صالحًا",
+  "noDate": "بدون تاريخ",
+  "upcoming": "القادمة",
+  "past": "السابقة",
+  "today": "اليوم",
+  "showAll": "عرض الكل",
+  "showLess": "عرض أقل",
+  "allDay": "طوال اليوم",
+  "continueLabel": "متابعة",
+  "next": "التالي",
+  "tasksTitle": "مهامي",
+  "tasksSubtitle": "نظّم أولوياتك",
+  "tasksTodo": "للإنجاز",
+  "tasksDone": "المكتملة",
+  "tasksFilterAll": "الكل",
+  "tasksPriority": "ذات أولوية",
+  "tasksMarkTodo": "تعيين كغير منجزة",
+  "tasksMarkDone": "تعيين كمنجزة",
+  "tasksDeleteTitle": "حذف المهمة؟",
+  "tasksDeleteBody": "سيتم حذف \"{title}\" نهائيًا.",
+  "@tasksDeleteBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksUpdateError": "تعذّر تحديث المهمة: {error}",
+  "@tasksUpdateError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksLoadError": "خطأ في التحميل\n{error}",
+  "@tasksLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksAddByVoice": "أضف مهمة بصوتك",
+  "tasksEmpty": "لا توجد مهام حاليًا",
+  "tasksEmptyHint": "أملِ مهمة باستخدام الميكروفون",
+  "tasksEditTitle": "تعديل المهمة",
+  "settingsProfile": "الملف الشخصي",
+  "settingsProfileSub": "الاسم، الصورة، النبذة",
+  "settingsAccountSecurity": "الحساب والأمان",
+  "settingsAccountSecuritySub": "تغيير الحساب، كلمة المرور",
+  "settingsTimezone": "المنطقة الزمنية",
+  "settingsNotifications": "الإشعارات",
+  "settingsCalendar": "التقويم المتصل",
+  "settingsPrivacy": "الخصوصية والأمان",
+  "settingsHelp": "المساعدة والدعم",
+  "calendarSyncedTitle": "تمت مزامنة التقويم",
+  "calendarSyncedBody": "تتم مزامنة أحداثك الصوتية المؤكدة تلقائيًا مع Google Calendar.",
+  "privacyTitle": "الخصوصية والأمان",
+  "privacyBody": "يحترم SayDo خصوصيتك. تُحوَّل تسجيلاتك الصوتية إلى نص وتُعالَج بشكل آمن دون بيعها أو مشاركتها مع أطراف ثالثة.",
+  "helpBody": "يفهم SayDo الفرنسية والدارجة الجزائرية والإنجليزية.\n\nاضغط على الميكروفون وتحدّث بشكل طبيعي لإنشاء اجتماعات ومهام أو إرسال رسائل بريد إلكتروني!",
+  "placeholderMessage": "إعدادات الحساب والتفضيلات...",
+  "profileNameUpdated": "تم تعديل الاسم بنجاح.",
+  "profileAvatarSelected": "تم اختيار صورة SayDo الرمزية بنجاح.",
+  "profilePhoto": "صورة الملف الشخصي",
+  "profileAvatarRobot": "صورة الروبوت SayDo",
+  "profileCurrentlyUsed": "مستخدمة حاليًا",
+  "profileChooseGallery": "اختيار من المعرض",
+  "profileImportImage": "استيراد صورة شخصية",
+  "profileGallerySoon": "معرض الصور قريبًا",
+  "profileYourName": "اسمك",
+  "profileBio": "نبذة",
+  "profileBioHint": "عرّف بنفسك باختصار...",
+  "profileUpdate": "تحديث المعلومات",
+  "profileUpdated": "تم تحديث الملف الشخصي!",
+  "securityChangePassword": "تغيير كلمة المرور",
+  "securityNewPassword": "كلمة المرور الجديدة",
+  "securityMin6": "6 أحرف على الأقل",
+  "securityRepeat": "أعد كتابة كلمة المرور",
+  "passwordTooShort": "يجب أن تتكوّن كلمة المرور من 6 أحرف على الأقل",
+  "passwordsMismatch": "كلمتا المرور غير متطابقتين",
+  "securityPasswordUpdated": "✅ تم تحديث كلمة المرور بنجاح!",
+  "securityUpdatePassword": "تحديث كلمة المرور",
+  "securitySwitchTitle": "تغيير الحساب؟",
+  "securitySwitchBody": "سيتم تسجيل خروجك من هذا الحساب لتتمكن من الدخول بحساب آخر.",
+  "securityLogoutTitle": "تسجيل الخروج؟",
+  "securityLogoutBody": "هل تريد فعلًا تسجيل الخروج من SayDo؟",
+  "logoutAction": "تسجيل الخروج",
+  "securitySwitchAccount": "تغيير الحساب",
+  "securitySwitchSub": "سجّل الخروج من هذا الحساب للدخول بحساب آخر.",
+  "securityChangePasswordSub": "حدّث كلمة المرور لمزيد من الأمان.",
+  "securityEmailLocked": "لا يمكن تعديل عنوان البريد الإلكتروني. لاستخدام عنوان آخر، يرجى تغيير الحساب.",
+  "securityLogoutButton": "تسجيل الخروج",
+  "loginFillFields": "يرجى إدخال بريدك الإلكتروني وكلمة المرور",
+  "signupFillFields": "يرجى ملء جميع الحقول المطلوبة",
+  "accountCreated": "تم إنشاء الحساب بنجاح!",
+  "loginError": "خطأ في تسجيل الدخول: {error}",
+  "@loginError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "signupError": "خطأ في إنشاء الحساب: {error}",
+  "@signupError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "googleError": "فشل تسجيل الدخول عبر Google: {error}",
+  "@googleError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "appleError": "فشل تسجيل الدخول عبر Apple: {error}",
+  "@appleError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "facebookError": "فشل تسجيل الدخول عبر Facebook: {error}",
+  "@facebookError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "loginSubtitleSignup": "أنشئ حسابك على SayDo",
+  "loginSubtitleLogin": "سجّل الدخول إلى حسابك على SayDo",
+  "signIn": "تسجيل الدخول",
+  "dividerOr": "أو",
+  "createAccountArrow": "إنشاء حساب ←",
+  "loginTab": "دخول",
+  "signUpTab": "حساب جديد",
+  "continueWithGoogle": "المتابعة عبر Google",
+  "onbSkip": "تخطّي",
+  "onbGetStarted": "ابدأ",
+  "onbTag": "مساعد صوتي بالذكاء الاصطناعي",
+  "onbBubble": "«ذكّرني...»",
+  "onbTaskCreated": "تم إنشاء المهمة",
+  "onbHeadline": "قلها. نفّذها.",
+  "onbDesc1": "مساعدك الشخصي الذكي.\nتحدّث بشكل طبيعي، ويحوّل SayDo\nكل كلمة إلى فعل.",
+  "onbWelcome": "مرحبًا",
+  "onbDesc2": "قلها بصوت عالٍ،\nويدير SayDo جدولك.",
+  "onbAgenda": "الأجندة",
+  "onbSmart": "فهم\nذكي",
+  "onbDesc3": "امزج بين الدارجة والفرنسية والإنجليزية بشكل طبيعي.\nيستخرج SayDo التواريخ والمهام والأشخاص بسهولة.",
+  "eventsSubtitle": "مواعيدك ومهامك القادمة",
+  "eventsLoadError": "تعذّر تحميل الأحداث.\n{error}",
+  "@eventsLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "eventsEmpty": "لا توجد أحداث حاليًا.",
+  "eventsEmptyHint": "اضغط على الميكروفون لإملاء حدث.",
+  "eventsAllUpcoming": "كل الأحداث القادمة",
+  "eventSynced": "تمت المزامنة مع تقويم Google",
+  "eventPendingSync": "في انتظار المزامنة",
+  "homeSaved": "تم الحفظ. ستتم المزامنة مع Google قريبًا.",
+  "homeSpeakTo": "تحدّث إلى ",
+  "homeListening": "جارٍ الاستماع... اضغط للإرسال",
+  "homeProcessing": "جارٍ المعالجة...",
+  "homeTapRetry": "اضغط للمحاولة مجددًا",
+  "homeDefaultHint": "أنشئ حدثًا أو مهمة\nبصوتك فقط.",
+  "contactsTitle": "جهات الاتصال",
+  "contactsDeleteTitle": "حذف جهة الاتصال؟",
+  "contactsDeleteBody": "سيتم حذف {name} ({email}). لا تتأثر رسائل البريد السابقة.",
+  "@contactsDeleteBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "contactsLoadError": "تعذّر تحميل جهات الاتصال.\n{error}",
+  "@contactsLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "contactsEmpty": "لا توجد جهات اتصال حاليًا.",
+  "contactsEmptyHint": "أضف جهة اتصال هنا، أو تُحفظ\nتلقائيًا\nعند إرسال بريد إلكتروني.",
+  "contactDuplicate": "لديك بالفعل جهة اتصال بهذا الاسم.",
+  "contactEdit": "تعديل جهة الاتصال",
+  "contactNew": "جهة اتصال جديدة",
+  "proposalNewEvent": "حدث جديد",
+  "proposalNewEmail": "رسالة جديدة",
+  "proposalNewTask": "مهمة جديدة",
+  "voiceSaved": "تم الحفظ بنجاح! 🎉",
+  "voiceTitle": "SayDo صوتي",
+  "voiceSubtitle": "أنشئ مهمة أو موعدًا",
+  "voiceListening": "جارٍ الاستماع... اضغط للتأكيد",
+  "voiceProcessing": "يعالج SayDo طلبك...",
+  "voiceDone": "اكتمل التحليل",
+  "voiceTapToSpeak": "اضغط للتحدّث",
+  "voiceSpeakNaturally": "تحدّث بشكل طبيعي، وSayDo يتكفّل بالباقي.",
+  "voiceRecognizing": "التعرّف على الصوت واستخراج التفاصيل...",
+  "voiceExample": "مثال: «موعد غدًا الساعة 2 مع صوفي» أو «شراء الحليب»",
+  "gotIt": "فهمت",
+  "close": "إغلاق",
+  "great": "رائع!",
+  "emailsTapToCreate": "اضغط لإنشاء رسالة بصوتك",
+  "previewSaid": "قلتَ: {text}",
+  "@previewSaid": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "previewAgentAsks": "يسأل المساعد: {question}",
+  "@previewAgentAsks": {
+    "placeholders": {
+      "question": {
+        "type": "String"
+      }
+    }
+  },
+  "previewType": "النوع: {type}",
+  "@previewType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "previewTitle": "العنوان: {title}",
+  "@previewTitle": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "previewDate": "التاريخ: {date}",
+  "@previewDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "previewTime": "الوقت: {time}",
+  "@previewTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "previewPeople": "الأشخاص: {people}",
+  "@previewPeople": {
+    "placeholders": {
+      "people": {
+        "type": "String"
+      }
+    }
+  }
+}

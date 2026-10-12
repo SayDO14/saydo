@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'core/locale.dart';
+import 'package:saydo/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/config.dart';
@@ -41,13 +42,16 @@ class SayDoApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     
 
-    return MaterialApp.router(
-      title: 'SayDo',
-      theme: buildTheme(Brightness.light),
-      debugShowCheckedModeBanner: false, 
-      darkTheme: buildTheme(Brightness.dark),
-      routerConfig: ref.watch(routerProvider),
-    );
+   return MaterialApp.router(
+  title: 'SayDo',
+  debugShowCheckedModeBanner: false,
+  theme: buildTheme(Brightness.light),
+  darkTheme: buildTheme(Brightness.dark),
+  routerConfig: ref.watch(routerProvider),
+  locale: ref.watch(localeProvider),
+  supportedLocales: AppLocalizations.supportedLocales,
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+);
   }
 }
 

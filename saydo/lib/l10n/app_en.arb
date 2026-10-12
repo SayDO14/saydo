@@ -1,0 +1,371 @@
+{
+  "@@locale": "en",
+  "navHome": "Home",
+  "navEvents": "Events",
+  "navTasks": "Tasks",
+  "navEmails": "Emails",
+  "navSettings": "Settings",
+  "emailsTitle": "Emails",
+  "emailsSubtitle": "Your emails, fast",
+  "filterAll": "All",
+  "filterReceived": "Received",
+  "filterSent": "Sent",
+  "emailsEmpty": "No emails yet.",
+  "emailsEmptyHint": "Dictate one with the microphone.",
+  "loadError": "Couldn't load emails.\n{error}",
+  "@loadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "retry": "Retry",
+  "statusSent": "Sent",
+  "statusReceived": "Received",
+  "sentOn": "Sent on {date} · {time}",
+  "@sentOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "createdOn": "Created on {date} · {time}",
+  "@createdOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "messageLabel": "MESSAGE",
+  "language": "Language",
+  "appLanguage": "App language",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "save": "Save",
+  "confirm": "Confirm",
+  "required": "Required",
+  "errorGeneric": "Something went wrong",
+  "errorWithMessage": "Error: {error}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "saveError": "Could not save: {error}",
+  "@saveError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteError": "Could not delete: {error}",
+  "@deleteError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "fieldTitle": "Title",
+  "fieldNotes": "Notes",
+  "fieldName": "Name",
+  "fieldEmail": "Email",
+  "fieldEmailAddress": "Email address",
+  "fieldPassword": "Password",
+  "fieldConfirmPassword": "Confirm password",
+  "fieldFullName": "Full name",
+  "fieldDate": "Date",
+  "fieldTime": "Time",
+  "fieldDueDateOptional": "Due date (optional)",
+  "fieldPeople": "People (comma separated)",
+  "fieldToName": "To (name)",
+  "fieldSubject": "Subject",
+  "fieldMessage": "Message",
+  "invalidEmail": "Enter a valid email",
+  "noDate": "No date",
+  "upcoming": "Upcoming",
+  "past": "Past",
+  "today": "Today",
+  "showAll": "Show all",
+  "showLess": "Show less",
+  "allDay": "All day",
+  "continueLabel": "Continue",
+  "next": "Next",
+  "tasksTitle": "My tasks",
+  "tasksSubtitle": "Organize your priorities",
+  "tasksTodo": "To do",
+  "tasksDone": "Done",
+  "tasksFilterAll": "All",
+  "tasksPriority": "Priority",
+  "tasksMarkTodo": "Mark as to do",
+  "tasksMarkDone": "Mark as done",
+  "tasksDeleteTitle": "Delete this task?",
+  "tasksDeleteBody": "\"{title}\" will be permanently deleted.",
+  "@tasksDeleteBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksUpdateError": "Could not update the task: {error}",
+  "@tasksUpdateError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksLoadError": "Loading error\n{error}",
+  "@tasksLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksAddByVoice": "Add a task with your voice",
+  "tasksEmpty": "No tasks yet",
+  "tasksEmptyHint": "Dictate one with the microphone",
+  "tasksEditTitle": "Edit task",
+  "settingsProfile": "Profile",
+  "settingsProfileSub": "Name, photo, bio",
+  "settingsAccountSecurity": "Account and security",
+  "settingsAccountSecuritySub": "Switch account, password",
+  "settingsTimezone": "Time zone",
+  "settingsNotifications": "Notifications",
+  "settingsCalendar": "Connected calendar",
+  "settingsPrivacy": "Privacy and security",
+  "settingsHelp": "Help and support",
+  "calendarSyncedTitle": "Calendar synced",
+  "calendarSyncedBody": "Your confirmed voice events are automatically synced to Google Calendar.",
+  "privacyTitle": "Privacy & Security",
+  "privacyBody": "SayDo respects your privacy. Your audio recordings are transcribed and processed securely, and are never sold or shared with third parties.",
+  "helpBody": "SayDo understands French, Algerian Darija and English.\n\nTap the microphone and speak naturally to create meetings, tasks or send emails!",
+  "placeholderMessage": "Account settings and preferences...",
+  "profileNameUpdated": "Name updated successfully.",
+  "profileAvatarSelected": "SayDo avatar selected successfully.",
+  "profilePhoto": "Profile photo",
+  "profileAvatarRobot": "SayDo Robot avatar",
+  "profileCurrentlyUsed": "Currently in use",
+  "profileChooseGallery": "Choose from gallery",
+  "profileImportImage": "Import your own image",
+  "profileGallerySoon": "Photo gallery coming soon",
+  "profileYourName": "Your name",
+  "profileBio": "Bio",
+  "profileBioHint": "Describe yourself briefly...",
+  "profileUpdate": "Update information",
+  "profileUpdated": "Profile updated!",
+  "securityChangePassword": "Change password",
+  "securityNewPassword": "New password",
+  "securityMin6": "At least 6 characters",
+  "securityRepeat": "Repeat the password",
+  "passwordTooShort": "Password must be at least 6 characters",
+  "passwordsMismatch": "Passwords do not match",
+  "securityPasswordUpdated": "✅ Password updated successfully!",
+  "securityUpdatePassword": "Update password",
+  "securitySwitchTitle": "Switch account?",
+  "securitySwitchBody": "You will be signed out of this account so you can sign in with another one.",
+  "securityLogoutTitle": "Sign out?",
+  "securityLogoutBody": "Do you really want to sign out of SayDo?",
+  "logoutAction": "Sign out",
+  "securitySwitchAccount": "Switch account",
+  "securitySwitchSub": "Sign out of this account to sign in with another one.",
+  "securityChangePasswordSub": "Update your password for extra security.",
+  "securityEmailLocked": "The email address cannot be changed. To use another address, please switch account.",
+  "securityLogoutButton": "Sign out",
+  "loginFillFields": "Please enter your email and password",
+  "signupFillFields": "Please fill in all required fields",
+  "accountCreated": "Account created successfully!",
+  "loginError": "Sign-in error: {error}",
+  "@loginError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "signupError": "Sign-up error: {error}",
+  "@signupError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "googleError": "Google sign-in failed: {error}",
+  "@googleError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "appleError": "Apple sign-in failed: {error}",
+  "@appleError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "facebookError": "Facebook sign-in failed: {error}",
+  "@facebookError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "loginSubtitleSignup": "Create your SayDo account",
+  "loginSubtitleLogin": "Connect to your SayDo account",
+  "signIn": "Sign In",
+  "dividerOr": "Or",
+  "createAccountArrow": "Create account →",
+  "loginTab": "Login",
+  "signUpTab": "Sign up",
+  "continueWithGoogle": "Continue with Google",
+  "onbSkip": "Skip",
+  "onbGetStarted": "Get Started",
+  "onbTag": "AI VOICE ASSISTANT",
+  "onbBubble": "\"Remind me...\"",
+  "onbTaskCreated": "Task created",
+  "onbHeadline": "Say it. Do it.",
+  "onbDesc1": "Your smart personal assistant.\nSpeak naturally, SayDo\nturns every word into action.",
+  "onbWelcome": "WELCOME",
+  "onbDesc2": "Just say it out loud,\nSayDo manages your schedule.",
+  "onbAgenda": "Agenda",
+  "onbSmart": "SMART\nUNDERSTANDING",
+  "onbDesc3": "Mix Darija, French, and English naturally.\nSayDo extracts dates, tasks, and people effortlessly.",
+  "eventsSubtitle": "Your upcoming appointments and tasks",
+  "eventsLoadError": "Couldn't load events.\n{error}",
+  "@eventsLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "eventsEmpty": "No events yet.",
+  "eventsEmptyHint": "Tap the microphone to dictate one.",
+  "eventsAllUpcoming": "All upcoming events",
+  "eventSynced": "Synced with Google Calendar",
+  "eventPendingSync": "Waiting to sync",
+  "homeSaved": "Saved. It will sync to Google shortly.",
+  "homeSpeakTo": "Talk to ",
+  "homeListening": "Listening... tap to send",
+  "homeProcessing": "Processing...",
+  "homeTapRetry": "Tap to start over",
+  "homeDefaultHint": "Create an event or a task\njust with your voice.",
+  "contactsTitle": "Contacts",
+  "contactsDeleteTitle": "Delete this contact?",
+  "contactsDeleteBody": "{name} ({email}) will be deleted. Past emails are not affected.",
+  "@contactsDeleteBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "contactsLoadError": "Couldn't load contacts.\n{error}",
+  "@contactsLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "contactsEmpty": "No contacts yet.",
+  "contactsEmptyHint": "Add one here, or they are\nsaved automatically\nwhen you send an email.",
+  "contactDuplicate": "You already have a contact with this name.",
+  "contactEdit": "Edit contact",
+  "contactNew": "New contact",
+  "proposalNewEvent": "New event",
+  "proposalNewEmail": "New email",
+  "proposalNewTask": "New task",
+  "voiceSaved": "Saved successfully! 🎉",
+  "voiceTitle": "SayDo Voice",
+  "voiceSubtitle": "Create a task or an appointment",
+  "voiceListening": "Listening... Tap to confirm",
+  "voiceProcessing": "SayDo is processing...",
+  "voiceDone": "Analysis complete",
+  "voiceTapToSpeak": "Tap to speak",
+  "voiceSpeakNaturally": "Speak naturally, SayDo takes care of the rest.",
+  "voiceRecognizing": "Recognizing speech & extracting details...",
+  "voiceExample": "e.g. \"Appointment tomorrow at 2 PM with Sophie\" or \"Buy milk\"",
+  "gotIt": "Got it",
+  "close": "Close",
+  "great": "Great!",
+  "emailsTapToCreate": "Tap to create an email with voice",
+  "previewSaid": "You said: {text}",
+  "@previewSaid": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "previewAgentAsks": "The agent asks: {question}",
+  "@previewAgentAsks": {
+    "placeholders": {
+      "question": {
+        "type": "String"
+      }
+    }
+  },
+  "previewType": "Type: {type}",
+  "@previewType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "previewTitle": "Title: {title}",
+  "@previewTitle": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "previewDate": "Date: {date}",
+  "@previewDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "previewTime": "Time: {time}",
+  "@previewTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "previewPeople": "People: {people}",
+  "@previewPeople": {
+    "placeholders": {
+      "people": {
+        "type": "String"
+      }
+    }
+  }
+}

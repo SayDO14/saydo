@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../onboarding/onboarding_screen.dart';
 import 'auth_providers.dart';
+import 'package:saydo/l10n/app_localizations.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -39,7 +40,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Veuillez renseigner votre email et mot de passe')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.loginFillFields)),
       );
       return;
     }
@@ -58,7 +59,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur de connexion : $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.loginError('$e'))),
       );
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -73,21 +74,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Veuillez remplir tous les champs obligatoires')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.signupFillFields)),
       );
       return;
     }
 
     if (password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Les mots de passe ne correspondent pas')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.passwordsMismatch)),
       );
       return;
     }
 
     if (password.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Le mot de passe doit comporter au moins 6 caractères')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.passwordTooShort)),
       );
       return;
     }
@@ -106,14 +107,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         context.go('/');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Compte créé avec succès !')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.accountCreated)),
         );
         setState(() => _isSignUp = false);
       }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur d\'inscription : $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.signupError('$e'))),
       );
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -128,7 +129,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Connexion Google échouée : $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.googleError('$e'))),
       );
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -143,7 +144,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Connexion Apple échouée : $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.appleError('$e'))),
       );
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -158,7 +159,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Connexion Facebook échouée : $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.facebookError('$e'))),
       );
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -284,8 +285,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     duration: const Duration(milliseconds: 250),
                     child: Text(
                       _isSignUp
-                          ? 'Create your SayDo account'
-                          : 'Connect to your SayDo account',
+                          ? AppLocalizations.of(context)!.loginSubtitleSignup
+                          : AppLocalizations.of(context)!.loginSubtitleLogin,
                       key: ValueKey(_isSignUp),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
@@ -393,7 +394,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   // Email Input (Single Uniform Glass Field)
                   _buildGlassField(
                     controller: _emailController,
-                    hintText: 'Email',
+                    hintText: AppLocalizations.of(context)!.fieldEmail,
                     keyboardType: TextInputType.emailAddress,
                   ),
 
@@ -402,7 +403,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   // Password Input (Single Uniform Glass Field)
                   _buildGlassField(
                     controller: _passwordController,
-                    hintText: 'Mot de passe',
+                    hintText: AppLocalizations.of(context)!.fieldPassword,
                     obscureText: _obscurePassword,
                     suffixIcon: IconButton(
                       padding: EdgeInsets.zero,
@@ -423,14 +424,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                   // Primary Button (Sign In)
                   _buildPrimaryButton(
-                    label: 'Sign In',
+                    label: AppLocalizations.of(context)!.signIn,
                     onTap: _handleLogin,
                   ),
 
                   const SizedBox(height: 20),
 
                   // Divider "—— Or ——"
-                  _buildOrDivider(text: 'Or'),
+                  _buildOrDivider(text: AppLocalizations.of(context)!.dividerOr),
 
                   const SizedBox(height: 18),
 
@@ -516,14 +517,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: 20),
 
               // Full Name Label & Single Glass Field
-              _buildFieldLabel('Full Name'),
+              _buildFieldLabel(AppLocalizations.of(context)!.fieldFullName),
               const SizedBox(height: 8),
               ValueListenableBuilder<TextEditingValue>(
                 valueListenable: _fullNameController,
                 builder: (context, value, _) {
                   return _buildGlassField(
                     controller: _fullNameController,
-                    hintText: 'Full Name',
+                    hintText: AppLocalizations.of(context)!.fieldFullName,
                     suffixIcon: value.text.trim().isNotEmpty
                         ? const Icon(
                             Icons.check,
@@ -538,33 +539,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: 14),
 
               // Email Label & Single Glass Field
-              _buildFieldLabel('Email'),
+              _buildFieldLabel(AppLocalizations.of(context)!.fieldEmail),
               const SizedBox(height: 8),
               _buildGlassField(
                 controller: _emailController,
-                hintText: 'Email',
+                hintText: AppLocalizations.of(context)!.fieldEmail,
                 keyboardType: TextInputType.emailAddress,
               ),
 
               const SizedBox(height: 14),
 
               // Password Label & Single Glass Field
-              _buildFieldLabel('Password'),
+              _buildFieldLabel(AppLocalizations.of(context)!.fieldPassword),
               const SizedBox(height: 8),
               _buildGlassField(
                 controller: _passwordController,
-                hintText: 'Password',
+                hintText: AppLocalizations.of(context)!.fieldPassword,
                 obscureText: _obscurePassword,
               ),
 
               const SizedBox(height: 14),
 
               // Confirm Password Label & Single Glass Field
-              _buildFieldLabel('Confirm Password'),
+              _buildFieldLabel(AppLocalizations.of(context)!.fieldConfirmPassword),
               const SizedBox(height: 8),
               _buildGlassField(
                 controller: _confirmPasswordController,
-                hintText: 'Confirm Password',
+                hintText: AppLocalizations.of(context)!.fieldConfirmPassword,
                 obscureText: _obscureConfirmPassword,
                 suffixIcon: IconButton(
                   padding: EdgeInsets.zero,
@@ -585,14 +586,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
               // Primary Button: Create account ->
               _buildPrimaryButton(
-                label: 'Create account →',
+                label: AppLocalizations.of(context)!.createAccountArrow,
                 onTap: _handleSignUp,
               ),
 
               const SizedBox(height: 20),
 
               // Divider "—— OR ——"
-              _buildOrDivider(text: 'OR'),
+              _buildOrDivider(text: AppLocalizations.of(context)!.dividerOr),
 
               const SizedBox(height: 18),
 
@@ -625,14 +626,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         children: [
           Expanded(
             child: _TabButton(
-              label: 'Login',
+              label: AppLocalizations.of(context)!.loginTab,
               selected: !_isSignUp,
               onTap: () => setState(() => _isSignUp = false),
             ),
           ),
           Expanded(
             child: _TabButton(
-              label: 'Sign up',
+              label: AppLocalizations.of(context)!.signUpTab,
               selected: _isSignUp,
               onTap: () => setState(() => _isSignUp = true),
             ),
@@ -855,8 +856,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 fit: BoxFit.contain,
               ),
               const SizedBox(width: 12),
-              const Text(
-                'Continue with Google',
+              Text(
+                AppLocalizations.of(context)!.continueWithGoogle,
                 style: TextStyle(
                   color: Color(0xFF1F2937),
                   fontSize: 15,

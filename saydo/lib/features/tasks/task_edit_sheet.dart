@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/date_format.dart';
 import 'task_item.dart';
 import 'tasks_repository.dart';
+import 'package:saydo/l10n/app_localizations.dart';
 
 /// Ouvre la modale de modification d'une tâche. Retourne true si modifiée.
 Future<bool?> showTaskEditSheet(BuildContext context, TaskItem task) {
@@ -72,7 +73,7 @@ class _TaskEditSheetState extends ConsumerState<TaskEditSheet> {
       if (mounted) {
         setState(() {
           _saving = false;
-          _error = 'Impossible d\'enregistrer : $e';
+          _error = AppLocalizations.of(context)!.saveError('$e');
         });
       }
     }
@@ -90,23 +91,23 @@ class _TaskEditSheetState extends ConsumerState<TaskEditSheet> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('Modifier la tâche', style: theme.textTheme.titleLarge),
+              Text(AppLocalizations.of(context)!.tasksEditTitle, style: theme.textTheme.titleLarge),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _title,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  labelText: 'Titre',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.fieldTitle,
                   border: OutlineInputBorder(),
                 ),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Requis' : null,
+                validator: (v) => (v == null || v.trim().isEmpty) ? AppLocalizations.of(context)!.required : null,
               ),
               const SizedBox(height: 12),
               InkWell(
                 onTap: _pickDate,
                 child: InputDecorator(
                   decoration: InputDecoration(
-                    labelText: 'Date d\'échéance (optionnelle)',
+                    labelText: AppLocalizations.of(context)!.fieldDueDateOptional,
                     border: const OutlineInputBorder(),
                     suffixIcon: _dueDate != null
                         ? IconButton(
@@ -116,7 +117,7 @@ class _TaskEditSheetState extends ConsumerState<TaskEditSheet> {
                         : const Icon(Icons.calendar_today),
                   ),
                   child: Text(
-                    _dueDate != null ? formatDayLabel(_dueDate!) : 'Aucune date',
+                    _dueDate != null ? formatDayLabel(_dueDate!) : AppLocalizations.of(context)!.noDate,
                   ),
                 ),
               ),
@@ -126,8 +127,8 @@ class _TaskEditSheetState extends ConsumerState<TaskEditSheet> {
                 minLines: 2,
                 maxLines: 5,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  labelText: 'Notes',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.fieldNotes,
                   alignLabelWithHint: true,
                   border: OutlineInputBorder(),
                 ),
@@ -145,7 +146,7 @@ class _TaskEditSheetState extends ConsumerState<TaskEditSheet> {
                         height: 18,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Enregistrer'),
+                    : Text(AppLocalizations.of(context)!.save),
               ),
             ],
           ),

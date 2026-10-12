@@ -9,6 +9,7 @@ import '../voice/voice_sheet.dart';
 import 'task_edit_sheet.dart';
 import 'task_item.dart';
 import 'tasks_repository.dart';
+import 'package:saydo/l10n/app_localizations.dart';
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 const _bg          = Color(0xFF070818);
@@ -38,7 +39,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
       await ref.read(tasksRepositoryProvider).toggleDone(task.id, isDone);
       ref.invalidate(tasksProvider);
     } catch (e) {
-      if (mounted) _showError('Impossible de mettre a jour la tache : $e');
+      if (mounted) _showError(AppLocalizations.of(context)!.tasksUpdateError('$e'));
     }
   }
 
@@ -49,7 +50,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
       await ref.read(tasksRepositoryProvider).delete(task.id);
       ref.invalidate(tasksProvider);
     } catch (e) {
-      if (mounted) _showError('Impossible de supprimer : $e');
+      if (mounted) _showError(AppLocalizations.of(context)!.deleteError('$e'));
     }
   }
 
@@ -61,15 +62,15 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             borderRadius: BorderRadius.circular(20),
             side: const BorderSide(color: _cardBorder, width: 1.2),
           ),
-          title: const Text('Supprimer la tache ?',
+          title: Text(AppLocalizations.of(context)!.tasksDeleteTitle,
               style: TextStyle(
                   color: _textPrimary, fontWeight: FontWeight.bold)),
-          content: Text('"${task.title}" sera supprimee definitivement.',
+          content: Text(AppLocalizations.of(context)!.tasksDeleteBody(task.title),
               style: const TextStyle(color: _textSec)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Annuler',
+              child: Text(AppLocalizations.of(context)!.cancel,
                   style: TextStyle(color: _textSec)),
             ),
             FilledButton(
@@ -79,7 +80,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                     borderRadius: BorderRadius.circular(10)),
               ),
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Supprimer'),
+              child: Text(AppLocalizations.of(context)!.delete),
             ),
           ],
         ),
@@ -126,13 +127,13 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                     const Icon(Icons.wifi_off_rounded,
                         color: _textSec, size: 48),
                     const SizedBox(height: 12),
-                    Text('Erreur de chargement\n$e',
+                    Text(AppLocalizations.of(context)!.tasksLoadError('$e'),
                         textAlign: TextAlign.center,
                         style: const TextStyle(color: _textSec)),
                     const SizedBox(height: 16),
                     FilledButton(
                       onPressed: () => ref.invalidate(tasksProvider),
-                      child: const Text('Reessayer'),
+                      child: Text(AppLocalizations.of(context)!.retry),
                     ),
                   ],
                 ),
@@ -231,8 +232,8 @@ class _TasksBody extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  const Text(
-                    'Mes taches',
+                  Text(
+                    AppLocalizations.of(context)!.tasksTitle,
                     style: TextStyle(
                       color: _textPrimary,
                       fontSize: 28,
@@ -240,8 +241,8 @@ class _TasksBody extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 2),
-                  const Text(
-                    'Organisez vos priorites',
+                  Text(
+                    AppLocalizations.of(context)!.tasksSubtitle,
                     style: TextStyle(color: _textSec, fontSize: 13),
                   ),
                 ],
@@ -296,7 +297,7 @@ class _TasksBody extends StatelessWidget {
               Expanded(
                 child: _StatCard(
                   icon: Icons.check_box_outline_blank_rounded,
-                  label: 'A faire',
+                  label: AppLocalizations.of(context)!.tasksTodo,
                   count: _todo.length,
                   color: _accent,
                 ),
@@ -305,7 +306,7 @@ class _TasksBody extends StatelessWidget {
               Expanded(
                 child: _StatCard(
                   icon: Icons.check_circle_outline_rounded,
-                  label: 'Terminees',
+                  label: AppLocalizations.of(context)!.tasksDone,
                   count: _done.length,
                   color: _doneColor,
                 ),
@@ -328,15 +329,15 @@ class _TasksBody extends StatelessWidget {
             child: Row(
               children: [
                 _FilterTab(
-                    label: 'Toutes',
+                    label: AppLocalizations.of(context)!.tasksFilterAll,
                     active: filter == _Filter.all,
                     onTap: () => onFilterChange(_Filter.all)),
                 _FilterTab(
-                    label: "Aujourd'hui",
+                    label: AppLocalizations.of(context)!.today,
                     active: filter == _Filter.today,
                     onTap: () => onFilterChange(_Filter.today)),
                 _FilterTab(
-                    label: 'A venir',
+                    label: AppLocalizations.of(context)!.upcoming,
                     active: filter == _Filter.upcoming,
                     onTap: () => onFilterChange(_Filter.upcoming)),
               ],
@@ -359,10 +360,10 @@ class _TasksBody extends StatelessWidget {
                       // Section header
                       _SectionHeader(
                         label: filter == _Filter.today
-                            ? "Aujourd'hui"
+                            ? AppLocalizations.of(context)!.today
                             : filter == _Filter.upcoming
-                                ? 'A venir'
-                                : "Aujourd'hui",
+                                ? AppLocalizations.of(context)!.upcoming
+                                : AppLocalizations.of(context)!.today,
                         count: filtered.length,
                       ),
                       const SizedBox(height: 10),
@@ -644,11 +645,11 @@ class _TaskCard extends StatelessWidget {
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: const [
+                            children: [
                               Icon(Icons.flag_rounded,
                                   size: 11, color: _accent),
                               SizedBox(width: 4),
-                              Text('Prioritaire',
+                              Text(AppLocalizations.of(context)!.tasksPriority,
                                   style: TextStyle(
                                       color: _accent,
                                       fontSize: 11,
@@ -704,7 +705,7 @@ class _TaskCard extends StatelessWidget {
               leading: const Icon(Icons.check_circle_outline_rounded,
                   color: _doneColor),
               title: Text(
-                task.isDone ? 'Marquer comme a faire' : 'Marquer comme terminee',
+                task.isDone ? AppLocalizations.of(context)!.tasksMarkTodo : AppLocalizations.of(context)!.tasksMarkDone,
                 style: const TextStyle(color: _textPrimary),
               ),
               onTap: () {
@@ -715,7 +716,7 @@ class _TaskCard extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.delete_outline_rounded,
                   color: Colors.redAccent),
-              title: const Text('Supprimer',
+              title: Text(AppLocalizations.of(context)!.delete,
                   style: TextStyle(color: Colors.redAccent)),
               onTap: () {
                 Navigator.pop(context);
@@ -761,9 +762,9 @@ class _VoiceAddBar extends StatelessWidget {
                   color: _accent, size: 18),
             ),
             const SizedBox(width: 12),
-            const Expanded(
+            Expanded(
               child: Text(
-                'Ajoutez une tache avec votre voix',
+                AppLocalizations.of(context)!.tasksAddByVoice,
                 style: TextStyle(color: _textSec, fontSize: 14),
               ),
             ),
@@ -807,8 +808,8 @@ class _EmptyState extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Aucune tâche pour le moment',
+              Text(
+                AppLocalizations.of(context)!.tasksEmpty,
                 style: TextStyle(
                     color: _textPrimary,
                     fontSize: 16,
@@ -817,8 +818,8 @@ class _EmptyState extends StatelessWidget {
               const SizedBox(height: 6),
               GestureDetector(
                 onTap: onVoiceAdd,
-                child: const Text(
-                  'Dictez-en une avec le micro',
+                child: Text(
+                  AppLocalizations.of(context)!.tasksEmptyHint,
                   style: TextStyle(
                     color: _accent,
                     fontSize: 13,

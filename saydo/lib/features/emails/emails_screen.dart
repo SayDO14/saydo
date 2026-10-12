@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:saydo/l10n/app_localizations.dart';
+
 import '../../core/date_format.dart';
 import '../voice/voice_sheet.dart';
 import 'email_item.dart';
@@ -94,20 +96,20 @@ class _EmailsScreenState extends ConsumerState<EmailsScreen> {
                         ),
                       ),
                       const SizedBox(width: 14),
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Emails',
-                            style: TextStyle(
+                            AppLocalizations.of(context)!.emailsTitle,
+                            style: const TextStyle(
                               color: _textPrimary,
                               fontSize: 26,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
-                            'Vos emails, rapidement',
-                            style: TextStyle(
+                            AppLocalizations.of(context)!.emailsSubtitle,
+                            style: const TextStyle(
                               color: _textSecondary,
                               fontSize: 13,
                             ),
@@ -133,17 +135,17 @@ class _EmailsScreenState extends ConsumerState<EmailsScreen> {
                     child: Row(
                       children: [
                         _FilterTab(
-                          label: 'Tous',
+                          label: AppLocalizations.of(context)!.filterAll,
                           active: _filter == _EmailFilter.all,
                           onTap: () => setState(() => _filter = _EmailFilter.all),
                         ),
                         _FilterTab(
-                          label: 'Reçus',
+                          label: AppLocalizations.of(context)!.filterReceived,
                           active: _filter == _EmailFilter.received,
                           onTap: () => setState(() => _filter = _EmailFilter.received),
                         ),
                         _FilterTab(
-                          label: 'Envoyés',
+                          label: AppLocalizations.of(context)!.filterSent,
                           active: _filter == _EmailFilter.sent,
                           onTap: () => setState(() => _filter = _EmailFilter.sent),
                         ),
@@ -167,14 +169,14 @@ class _EmailsScreenState extends ConsumerState<EmailsScreen> {
                           const Icon(Icons.error_outline, color: _textSecondary, size: 48),
                           const SizedBox(height: 12),
                           Text(
-                            'Impossible de charger les emails.\n$e',
+                            AppLocalizations.of(context)!.loadError('$e'),
                             textAlign: TextAlign.center,
                             style: const TextStyle(color: _textSecondary),
                           ),
                           const SizedBox(height: 16),
                           FilledButton(
                             onPressed: () => ref.invalidate(emailsProvider),
-                            child: const Text('Réessayer'),
+                            child: Text(AppLocalizations.of(context)!.retry),
                           ),
                         ],
                       ),
@@ -323,7 +325,9 @@ class _EmailsScreenState extends ConsumerState<EmailsScreen> {
                           ),
                         ),
                         child: Text(
-                          email.isSent ? 'Envoyé' : 'Reçu',
+                          email.isSent
+                              ? AppLocalizations.of(context)!.statusSent
+                              : AppLocalizations.of(context)!.statusReceived,
                           style: TextStyle(
                             color: email.isSent
                                 ? const Color(0xFF10B981)
@@ -345,13 +349,13 @@ class _EmailsScreenState extends ConsumerState<EmailsScreen> {
                   _detailRow(
                     Icons.schedule_rounded,
                     email.isSent && email.sentAt != null
-                        ? 'Envoyé le ${formatDayLabel(email.sentAt!)} · ${formatClock(email.sentAt!)}'
-                        : 'Créé le ${formatDayLabel(email.createdAt)} · ${formatClock(email.createdAt)}',
+                        ? AppLocalizations.of(context)!.sentOn(formatDayLabel(email.sentAt!), formatClock(email.sentAt!))
+                        : AppLocalizations.of(context)!.createdOn(formatDayLabel(email.createdAt), formatClock(email.createdAt)),
                   ),
                   const Divider(color: _cardBorder, height: 24),
-                  const Text(
-                    'MESSAGE',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.messageLabel,
+                    style: const TextStyle(
                       color: _accent,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -625,9 +629,9 @@ class _EmptyEmailView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Aucun email pour le moment.',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.emailsEmpty,
+            style: const TextStyle(
               color: _textPrimary,
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -636,9 +640,9 @@ class _EmptyEmailView extends StatelessWidget {
           const SizedBox(height: 6),
           GestureDetector(
             onTap: onVoice,
-            child: const Text(
-              'Dictez-en un avec le micro.',
-              style: TextStyle(
+            child: Text(
+              AppLocalizations.of(context)!.emailsTapToCreate,
+              style: const TextStyle(
                 color: _accent,
                 fontSize: 13,
                 decoration: TextDecoration.underline,
