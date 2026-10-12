@@ -22,3 +22,8 @@ saydo/.dart_tool/
 saydo/build/
 
 saydo/.flutter-plugins-dependencies
+
+dart_tool/
+.dart_tool/
+build/
+*.log
