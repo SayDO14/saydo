@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'core/locale.dart';
+import 'package:saydo/l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/config.dart';
+import 'core/preferences.dart';
 import 'core/router.dart';
 import 'core/theme.dart';
 
@@ -18,20 +22,35 @@ Future<void> main() async {
     url: AppConfig.supabaseUrl,
     publishableKey: AppConfig.supabaseAnonKey,
   );
-  runApp(const ProviderScope(child: SayDoApp()));
+
+  final prefs = await SharedPreferences.getInstance();
+  
+  runApp(
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
+      child: const SayDoApp(),
+    ),
+  );
 }
 
 class SayDoApp extends ConsumerWidget {
   const SayDoApp({super.key});
-
+  
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    
+
     return MaterialApp.router(
-      title: 'SayDo',
-      theme: buildTheme(Brightness.light),
-      darkTheme: buildTheme(Brightness.dark),
-      routerConfig: ref.watch(routerProvider),
-    );
+  title: 'SayDo',
+  theme: buildTheme(Brightness.light),
+  darkTheme: buildTheme(Brightness.dark),
+  routerConfig: ref.watch(routerProvider),
+  locale: ref.watch(localeProvider),
+  supportedLocales: AppLocalizations.supportedLocales,
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+);
   }
 }
 

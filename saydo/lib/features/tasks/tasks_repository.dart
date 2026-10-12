@@ -7,7 +7,7 @@ final tasksRepositoryProvider = Provider<TasksRepository>(
   (ref) => TasksRepository(Supabase.instance.client),
 );
 
-/// Incomplete tasks first, then by due date (nulls last), then oldest first.
+/// Tâches actives et terminées de l'utilisateur.
 final tasksProvider = FutureProvider.autoDispose<List<TaskItem>>(
   (ref) => ref.watch(tasksRepositoryProvider).fetch(),
 );
@@ -23,22 +23,29 @@ class TasksRepository {
         .from('tasks')
         .select()
         .eq('user_id', _uid)
-        .order('done', ascending: true)
         .order('due_at', ascending: true, nullsFirst: false)
-        .order('created_at', ascending: true);
+        .order('created_at', ascending: false);
     return rows.map(TaskItem.fromJson).toList();
   }
 
-  /// Toggle done status. Sets/clears completed_at accordingly.
-  Future<void> toggleDone(String id, bool done) async {
+  Future<void> toggleDone(String id, bool isDone) async {
     await _db.from('tasks').update({
-      'done': done,
-      'completed_at': done ? DateTime.now().toIso8601String() : null,
+      'status': isDone ? 'done' : 'todo',
+      'completed_at': isDone ? DateTime.now().toUtc().toIso8601String() : null,
     }).eq('id', id);
   }
 
-  Future<void> updateTitle(String id, String title) async {
-    await _db.from('tasks').update({'title': title.trim()}).eq('id', id);
+  Future<void> update({
+    required String id,
+    required String title,
+    String? notes,
+    DateTime? dueAt,
+  }) async {
+    await _db.from('tasks').update({
+      'title': title.trim(),
+      'notes': (notes == null || notes.trim().isEmpty) ? null : notes.trim(),
+      'due_at': dueAt?.toUtc().toIso8601String(),
+    }).eq('id', id);
   }
 
   Future<void> delete(String id) async {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'contacts_repository.dart';
+import 'package:saydo/l10n/app_localizations.dart';
 
 /// Add (contact == null) or edit a contact. Pops true when saved.
 Future<bool?> showContactSheet(BuildContext context, {Contact? contact}) {
@@ -53,14 +54,14 @@ class _ContactSheetState extends ConsumerState<ContactSheet> {
       if (mounted) {
         setState(() {
           _saving = false;
-          _error = 'You already have a contact with this name.';
+          _error = AppLocalizations.of(context)!.contactDuplicate;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
           _saving = false;
-          _error = 'Could not save: $e';
+          _error = AppLocalizations.of(context)!.saveError('$e');
         });
       }
     }
@@ -79,22 +80,22 @@ class _ContactSheetState extends ConsumerState<ContactSheet> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(editing ? 'Edit contact' : 'New contact', style: theme.textTheme.titleLarge),
+              Text(editing ? AppLocalizations.of(context)!.contactEdit : AppLocalizations.of(context)!.contactNew, style: theme.textTheme.titleLarge),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _name,
                 textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.fieldName, border: OutlineInputBorder()),
+                validator: (v) => (v == null || v.trim().isEmpty) ? AppLocalizations.of(context)!.required : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _email,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(labelText: 'Email address', border: OutlineInputBorder()),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.fieldEmailAddress, border: OutlineInputBorder()),
                 validator: (v) => RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(v?.trim() ?? '')
                     ? null
-                    : 'Enter a valid email',
+                    : AppLocalizations.of(context)!.invalidEmail,
               ),
               if (_error != null) ...[
                 const SizedBox(height: 8),
@@ -109,7 +110,7 @@ class _ContactSheetState extends ConsumerState<ContactSheet> {
                         height: 18,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Save'),
+                    : Text(AppLocalizations.of(context)!.save),
               ),
             ],
           ),

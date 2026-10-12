@@ -1,0 +1,371 @@
+{
+  "@@locale": "fr",
+  "navHome": "Accueil",
+  "navEvents": "Événements",
+  "navTasks": "Tâches",
+  "navEmails": "Emails",
+  "navSettings": "Paramètres",
+  "emailsTitle": "Emails",
+  "emailsSubtitle": "Vos emails, rapidement",
+  "filterAll": "Tous",
+  "filterReceived": "Reçus",
+  "filterSent": "Envoyés",
+  "emailsEmpty": "Aucun email pour le moment.",
+  "emailsEmptyHint": "Dictez-en un avec le micro.",
+  "loadError": "Impossible de charger les emails.\n{error}",
+  "@loadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "retry": "Réessayer",
+  "statusSent": "Envoyé",
+  "statusReceived": "Reçu",
+  "sentOn": "Envoyé le {date} · {time}",
+  "@sentOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "createdOn": "Créé le {date} · {time}",
+  "@createdOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "messageLabel": "MESSAGE",
+  "language": "Langue",
+  "appLanguage": "Langue de l'application",
+  "cancel": "Annuler",
+  "delete": "Supprimer",
+  "save": "Enregistrer",
+  "confirm": "Confirmer",
+  "required": "Requis",
+  "errorGeneric": "Une erreur est survenue",
+  "errorWithMessage": "Erreur : {error}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "saveError": "Impossible d'enregistrer : {error}",
+  "@saveError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteError": "Impossible de supprimer : {error}",
+  "@deleteError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "fieldTitle": "Titre",
+  "fieldNotes": "Notes",
+  "fieldName": "Nom",
+  "fieldEmail": "Email",
+  "fieldEmailAddress": "Adresse e-mail",
+  "fieldPassword": "Mot de passe",
+  "fieldConfirmPassword": "Confirmer le mot de passe",
+  "fieldFullName": "Nom complet",
+  "fieldDate": "Date",
+  "fieldTime": "Heure",
+  "fieldDueDateOptional": "Date d'échéance (optionnelle)",
+  "fieldPeople": "Personnes (séparées par des virgules)",
+  "fieldToName": "À (nom)",
+  "fieldSubject": "Objet",
+  "fieldMessage": "Message",
+  "invalidEmail": "Saisissez un e-mail valide",
+  "noDate": "Aucune date",
+  "upcoming": "À venir",
+  "past": "Passés",
+  "today": "Aujourd'hui",
+  "showAll": "Voir tout",
+  "showLess": "Réduire",
+  "allDay": "Toute la journée",
+  "continueLabel": "Continuer",
+  "next": "Suivant",
+  "tasksTitle": "Mes tâches",
+  "tasksSubtitle": "Organisez vos priorités",
+  "tasksTodo": "À faire",
+  "tasksDone": "Terminées",
+  "tasksFilterAll": "Toutes",
+  "tasksPriority": "Prioritaire",
+  "tasksMarkTodo": "Marquer comme à faire",
+  "tasksMarkDone": "Marquer comme terminée",
+  "tasksDeleteTitle": "Supprimer la tâche ?",
+  "tasksDeleteBody": "« {title} » sera supprimée définitivement.",
+  "@tasksDeleteBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksUpdateError": "Impossible de mettre à jour la tâche : {error}",
+  "@tasksUpdateError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksLoadError": "Erreur de chargement\n{error}",
+  "@tasksLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "tasksAddByVoice": "Ajoutez une tâche avec votre voix",
+  "tasksEmpty": "Aucune tâche pour le moment",
+  "tasksEmptyHint": "Dictez-en une avec le micro",
+  "tasksEditTitle": "Modifier la tâche",
+  "settingsProfile": "Profil",
+  "settingsProfileSub": "Nom, photo, bio",
+  "settingsAccountSecurity": "Compte et sécurité",
+  "settingsAccountSecuritySub": "Changer de compte, mot de passe",
+  "settingsTimezone": "Fuseau horaire",
+  "settingsNotifications": "Notifications",
+  "settingsCalendar": "Calendrier connecté",
+  "settingsPrivacy": "Confidentialité et sécurité",
+  "settingsHelp": "Aide et support",
+  "calendarSyncedTitle": "Calendrier synchronisé",
+  "calendarSyncedBody": "Vos événements vocaux confirmés sont automatiquement synchronisés vers Google Calendar.",
+  "privacyTitle": "Confidentialité & Sécurité",
+  "privacyBody": "SayDo respecte votre vie privée. Vos enregistrements audio sont transcrits puis traités de manière sécurisée sans être revendus ni partagés à des tiers.",
+  "helpBody": "SayDo comprend le français, la darija algérienne et l'anglais.\n\nAppuyez sur le micro et parlez naturellement pour créer des réunions, des tâches ou envoyer des e-mails !",
+  "placeholderMessage": "Paramètres du compte et préférences...",
+  "profileNameUpdated": "Le nom a été modifié avec succès.",
+  "profileAvatarSelected": "Avatar SayDo sélectionné avec succès.",
+  "profilePhoto": "Photo de profil",
+  "profileAvatarRobot": "Avatar Robot SayDo",
+  "profileCurrentlyUsed": "Actuellement utilisé",
+  "profileChooseGallery": "Choisir dans la galerie",
+  "profileImportImage": "Importer une image personnelle",
+  "profileGallerySoon": "Galerie photo bientôt disponible",
+  "profileYourName": "Votre nom",
+  "profileBio": "Bio",
+  "profileBioHint": "Décrivez-vous brièvement...",
+  "profileUpdate": "Mettre à jour les informations",
+  "profileUpdated": "Profil mis à jour !",
+  "securityChangePassword": "Changer le mot de passe",
+  "securityNewPassword": "Nouveau mot de passe",
+  "securityMin6": "Minimum 6 caractères",
+  "securityRepeat": "Répétez le mot de passe",
+  "passwordTooShort": "Le mot de passe doit comporter au moins 6 caractères",
+  "passwordsMismatch": "Les mots de passe ne correspondent pas",
+  "securityPasswordUpdated": "✅ Mot de passe mis à jour avec succès !",
+  "securityUpdatePassword": "Mettre à jour le mot de passe",
+  "securitySwitchTitle": "Changer de compte ?",
+  "securitySwitchBody": "Vous serez déconnecté de ce compte afin de vous connecter avec un autre compte.",
+  "securityLogoutTitle": "Se déconnecter ?",
+  "securityLogoutBody": "Voulez-vous vraiment vous déconnecter de SayDo ?",
+  "logoutAction": "Déconnexion",
+  "securitySwitchAccount": "Changer de compte",
+  "securitySwitchSub": "Se déconnecter de ce compte pour vous connecter avec un autre compte.",
+  "securityChangePasswordSub": "Mettez à jour votre mot de passe pour plus de sécurité.",
+  "securityEmailLocked": "L'adresse e-mail ne peut pas être modifiée. Pour utiliser une autre adresse, veuillez changer de compte.",
+  "securityLogoutButton": "Se déconnecter",
+  "loginFillFields": "Veuillez renseigner votre email et mot de passe",
+  "signupFillFields": "Veuillez remplir tous les champs obligatoires",
+  "accountCreated": "Compte créé avec succès !",
+  "loginError": "Erreur de connexion : {error}",
+  "@loginError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "signupError": "Erreur d'inscription : {error}",
+  "@signupError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "googleError": "Connexion Google échouée : {error}",
+  "@googleError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "appleError": "Connexion Apple échouée : {error}",
+  "@appleError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "facebookError": "Connexion Facebook échouée : {error}",
+  "@facebookError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "loginSubtitleSignup": "Créez votre compte SayDo",
+  "loginSubtitleLogin": "Connectez-vous à votre compte SayDo",
+  "signIn": "Se connecter",
+  "dividerOr": "Ou",
+  "createAccountArrow": "Créer un compte →",
+  "loginTab": "Connexion",
+  "signUpTab": "Inscription",
+  "continueWithGoogle": "Continuer avec Google",
+  "onbSkip": "Passer",
+  "onbGetStarted": "Commencer",
+  "onbTag": "ASSISTANT VOCAL IA",
+  "onbBubble": "« Rappelle-moi... »",
+  "onbTaskCreated": "Tâche créée",
+  "onbHeadline": "Dites-le. Faites-le.",
+  "onbDesc1": "Votre assistant personnel intelligent.\nParlez naturellement, SayDo\ntransforme chaque mot en action.",
+  "onbWelcome": "BIENVENUE",
+  "onbDesc2": "Dites-le à voix haute,\nSayDo gère votre emploi du temps.",
+  "onbAgenda": "Agenda",
+  "onbSmart": "COMPRÉHENSION\nINTELLIGENTE",
+  "onbDesc3": "Mélangez darija, français et anglais naturellement.\nSayDo extrait dates, tâches et personnes sans effort.",
+  "eventsSubtitle": "Vos rendez-vous et tâches à venir",
+  "eventsLoadError": "Impossible de charger les événements.\n{error}",
+  "@eventsLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "eventsEmpty": "Aucun événement pour l'instant.",
+  "eventsEmptyHint": "Appuyez sur le micro pour en dicter un.",
+  "eventsAllUpcoming": "Tous les événements à venir",
+  "eventSynced": "Synchronisé avec Google Agenda",
+  "eventPendingSync": "En attente de synchronisation",
+  "homeSaved": "Enregistré. La synchronisation avec Google va démarrer.",
+  "homeSpeakTo": "Parlez à ",
+  "homeListening": "En écoute... appuyez pour envoyer",
+  "homeProcessing": "Traitement en cours...",
+  "homeTapRetry": "Appuyez pour recommencer",
+  "homeDefaultHint": "Créez un événement ou une tâche\nsimplement avec votre voix.",
+  "contactsTitle": "Contacts",
+  "contactsDeleteTitle": "Supprimer le contact ?",
+  "contactsDeleteBody": "{name} ({email}) sera supprimé. Les emails passés ne sont pas affectés.",
+  "@contactsDeleteBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "contactsLoadError": "Impossible de charger les contacts.\n{error}",
+  "@contactsLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "contactsEmpty": "Aucun contact pour l'instant.",
+  "contactsEmptyHint": "Ajoutez-en un ici, ou ils sont\nsauvegardés automatiquement\nlorsque vous envoyez un email.",
+  "contactDuplicate": "Vous avez déjà un contact avec ce nom.",
+  "contactEdit": "Modifier le contact",
+  "contactNew": "Nouveau contact",
+  "proposalNewEvent": "Nouvel événement",
+  "proposalNewEmail": "Nouvel email",
+  "proposalNewTask": "Nouvelle tâche",
+  "voiceSaved": "Enregistré avec succès ! 🎉",
+  "voiceTitle": "SayDo Vocal",
+  "voiceSubtitle": "Créez une tâche ou un rendez-vous",
+  "voiceListening": "En écoute... Appuyez pour valider",
+  "voiceProcessing": "Traitement en cours par SayDo...",
+  "voiceDone": "Analyse terminée",
+  "voiceTapToSpeak": "Appuyez pour parler",
+  "voiceSpeakNaturally": "Parlez naturellement, SayDo s'occupe du reste.",
+  "voiceRecognizing": "Reconnaissance vocale & extraction des détails...",
+  "voiceExample": "Ex : « Rendez-vous demain à 14h avec Sophie » ou « Acheter du lait »",
+  "gotIt": "Compris",
+  "close": "Fermer",
+  "great": "Super !",
+  "emailsTapToCreate": "Appuyez pour créer un email avec la voix",
+  "previewSaid": "Vous avez dit : {text}",
+  "@previewSaid": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "previewAgentAsks": "L'agent demande : {question}",
+  "@previewAgentAsks": {
+    "placeholders": {
+      "question": {
+        "type": "String"
+      }
+    }
+  },
+  "previewType": "Type : {type}",
+  "@previewType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "previewTitle": "Titre : {title}",
+  "@previewTitle": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "previewDate": "Date : {date}",
+  "@previewDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "previewTime": "Heure : {time}",
+  "@previewTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "previewPeople": "Personnes : {people}",
+  "@previewPeople": {
+    "placeholders": {
+      "people": {
+        "type": "String"
+      }
+    }
+  }
+}

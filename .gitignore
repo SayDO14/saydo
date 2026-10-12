@@ -18,8 +18,15 @@ venv/
 .vscode/
 .idea/
 .DS_Store
+<<<<<<< HEAD
 
 dart_tool/
 .dart_tool/
 build/
 *.log
+=======
+saydo/.dart_tool/
+saydo/build/
+
+saydo/.flutter-plugins-dependencies
+>>>>>>> feature/profile-settings-ui

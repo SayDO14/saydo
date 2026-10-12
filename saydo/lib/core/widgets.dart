@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:saydo/l10n/app_localizations.dart';
 
 /// Centered error message with an optional retry button.
 class ErrorView extends StatelessWidget {
@@ -36,7 +37,7 @@ class ErrorView extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Retry'),
+                label: Text(AppLocalizations.of(context)!.retry),
               ),
             ],
           ],

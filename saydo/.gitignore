@@ -22,4 +22,11 @@ venv/
 dart_tool/
 .dart_tool/
 build/
+<<<<<<< HEAD
 *.log
+=======
+*.log
+
+**/.dart_tool/
+**/.flutter-plugins-dependencies
+>>>>>>> feature/profile-settings-ui

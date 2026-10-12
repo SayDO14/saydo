@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../voice/parse_result.dart';
 import 'proposal_data.dart';
 import 'save_service.dart';
+import 'package:saydo/l10n/app_localizations.dart';
 
 enum ProposalOutcome { saved, rejected }
 
@@ -100,7 +101,7 @@ class _ProposalSheetState extends ConsumerState<ProposalSheet> {
       if (mounted) {
         setState(() {
           _saving = false;
-          _error = 'Could not save: $e';
+          _error = AppLocalizations.of(context)!.saveError('$e');
         });
       }
     }
@@ -111,15 +112,15 @@ class _ProposalSheetState extends ConsumerState<ProposalSheet> {
     if (mounted) Navigator.pop(context, ProposalOutcome.rejected);
   }
 
-  String? _required(String? v) => (v == null || v.trim().isEmpty) ? 'Required' : null;
+  String? _required(String? v) => (v == null || v.trim().isEmpty) ? AppLocalizations.of(context)!.required : null;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final heading = switch (_data.type) {
-      'event' => 'New event',
-      'email' => 'New email',
-      _ => 'New task',
+      'event' => AppLocalizations.of(context)!.proposalNewEvent,
+      'email' => AppLocalizations.of(context)!.proposalNewEmail,
+      _ => AppLocalizations.of(context)!.proposalNewTask,
     };
 
     return Padding(
@@ -148,7 +149,7 @@ class _ProposalSheetState extends ConsumerState<ProposalSheet> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: _saving ? null : _reject,
-                      child: const Text('Cancel'),
+                      child: Text(AppLocalizations.of(context)!.cancel),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -161,7 +162,7 @@ class _ProposalSheetState extends ConsumerState<ProposalSheet> {
                               height: 18,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Text('Confirm'),
+                          : Text(AppLocalizations.of(context)!.confirm),
                     ),
                   ),
                 ],
@@ -176,7 +177,7 @@ class _ProposalSheetState extends ConsumerState<ProposalSheet> {
   List<Widget> _eventTaskFields() => [
         TextFormField(
           controller: _title,
-          decoration: const InputDecoration(labelText: 'Title', border: OutlineInputBorder()),
+          decoration: InputDecoration(labelText: AppLocalizations.of(context)!.fieldTitle, border: OutlineInputBorder()),
           validator: _required,
         ),
         const SizedBox(height: 12),
@@ -184,23 +185,25 @@ class _ProposalSheetState extends ConsumerState<ProposalSheet> {
           children: [
             Expanded(
               child: _PickerField(
-                label: _isEvent ? 'Date' : 'Due date (optional)',
+                label: _isEvent ? AppLocalizations.of(context)!.fieldDate : AppLocalizations.of(context)!.fieldDueDateOptional,
                 value: _data.date == null ? null : formatDate(_data.date!),
                 icon: Icons.calendar_today,
                 onTap: _pickDate,
                 onClear: _isEvent ? null : () => setState(() => _data.date = null),
                 required: _isEvent,
+                requiredText: AppLocalizations.of(context)!.required,
               ),
             ),
             if (_isEvent) ...[
               const SizedBox(width: 12),
               Expanded(
                 child: _PickerField(
-                  label: 'Time',
+                  label: AppLocalizations.of(context)!.fieldTime,
                   value: _data.time == null ? null : formatTime(_data.time!),
                   icon: Icons.access_time,
                   onTap: _pickTime,
                   required: true,
+                  requiredText: AppLocalizations.of(context)!.required,
                 ),
               ),
             ],
@@ -209,8 +212,8 @@ class _ProposalSheetState extends ConsumerState<ProposalSheet> {
         const SizedBox(height: 12),
         TextFormField(
           controller: _people,
-          decoration: const InputDecoration(
-            labelText: 'People (comma separated)',
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.fieldPeople,
             border: OutlineInputBorder(),
           ),
         ),
@@ -219,22 +222,22 @@ class _ProposalSheetState extends ConsumerState<ProposalSheet> {
   List<Widget> _emailFields() => [
         TextFormField(
           controller: _toName,
-          decoration: const InputDecoration(labelText: 'To (name)', border: OutlineInputBorder()),
+          decoration: InputDecoration(labelText: AppLocalizations.of(context)!.fieldToName, border: OutlineInputBorder()),
         ),
         const SizedBox(height: 12),
         TextFormField(
           controller: _toEmail,
           keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(labelText: 'Email address', border: OutlineInputBorder()),
+          decoration: InputDecoration(labelText: AppLocalizations.of(context)!.fieldEmailAddress, border: OutlineInputBorder()),
           validator: (v) {
             final t = v?.trim() ?? '';
-            return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(t) ? null : 'Enter a valid email';
+            return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(t) ? null : AppLocalizations.of(context)!.invalidEmail;
           },
         ),
         const SizedBox(height: 12),
         TextFormField(
           controller: _subject,
-          decoration: const InputDecoration(labelText: 'Subject', border: OutlineInputBorder()),
+          decoration: InputDecoration(labelText: AppLocalizations.of(context)!.fieldSubject, border: OutlineInputBorder()),
           validator: _required,
         ),
         const SizedBox(height: 12),
@@ -242,8 +245,8 @@ class _ProposalSheetState extends ConsumerState<ProposalSheet> {
           controller: _body,
           minLines: 4,
           maxLines: 10,
-          decoration: const InputDecoration(
-            labelText: 'Message',
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.fieldMessage,
             alignLabelWithHint: true,
             border: OutlineInputBorder(),
           ),
@@ -261,9 +264,10 @@ class _PickerField extends FormField<String> {
     required VoidCallback onTap,
     VoidCallback? onClear,
     bool required = false,
+    required String requiredText,
   }) : super(
           initialValue: value,
-          validator: (_) => required && value == null ? 'Required' : null,
+          validator: (_) => required && value == null ? requiredText : null,
           builder: (state) => InkWell(
             onTap: onTap,
             child: InputDecorator(
