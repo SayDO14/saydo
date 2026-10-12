@@ -27,50 +27,6 @@ class EmailsScreen extends ConsumerStatefulWidget {
 class _EmailsScreenState extends ConsumerState<EmailsScreen> {
   _EmailFilter _filter = _EmailFilter.all;
 
-  // Mock items matching the user mockup
-  List<EmailItem> get _demoEmails {
-    final now = DateTime.now();
-    return [
-      EmailItem(
-        id: 'demo-1',
-        toName: 'Hiba',
-        toEmail: 'hiba@example.com',
-        subject: 'Urgent : Examen demain',
-        body: 'Bonjour, je voulais te rappeler l\'examen de demain.',
-        status: 'approved',
-        createdAt: DateTime(now.year, now.month, now.day, 18, 42),
-      ),
-      EmailItem(
-        id: 'demo-2',
-        toName: 'Sami',
-        toEmail: 'sami@example.com',
-        subject: 'Réunion du projet',
-        body: 'On se retrouve demain à 10 h.',
-        status: 'approved',
-        createdAt: DateTime(now.year, now.month, now.day, 16, 20),
-      ),
-      EmailItem(
-        id: 'demo-3',
-        toName: 'Amel',
-        toEmail: 'amel@example.com',
-        subject: 'Fichier important',
-        body: 'Voici le document demandé pour le projet.',
-        status: 'approved',
-        createdAt: DateTime(now.year, now.month, now.day, 12, 15),
-      ),
-      EmailItem(
-        id: 'demo-4',
-        toName: 'Kawthar',
-        toEmail: 'kawthar@example.com',
-        subject: 'Rendez-vous',
-        body: 'Je confirme notre rendez-vous de demain.',
-        status: 'sent',
-        sentAt: DateTime(now.year, now.month, now.day, 9, 37),
-        createdAt: DateTime(now.year, now.month, now.day, 9, 37),
-      ),
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
     final emailsAsync = ref.watch(emailsProvider);
@@ -224,11 +180,7 @@ class _EmailsScreenState extends ConsumerState<EmailsScreen> {
                       ),
                     ),
                     data: (items) {
-                      final existing = items.map((e) => e.subject.toLowerCase()).toSet();
-                      final sourceList = [
-                        ...items,
-                        ..._demoEmails.where((d) => !existing.contains(d.subject.toLowerCase())),
-                      ];
+                      final sourceList = items;
 
                       final filtered = sourceList.where((email) {
                         switch (_filter) {
