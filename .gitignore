@@ -18,12 +18,8 @@ venv/
 .vscode/
 .idea/
 .DS_Store
-saydo/.dart_tool/
-saydo/build/
 
-saydo/.flutter-plugins-dependencies
-
-dart_tool/
+# Dart / Flutter
 .dart_tool/
 build/
 *.log

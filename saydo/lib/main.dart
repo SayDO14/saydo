@@ -42,9 +42,8 @@ class SayDoApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     
 
-   return MaterialApp.router(
+    return MaterialApp.router(
   title: 'SayDo',
-  debugShowCheckedModeBanner: false,
   theme: buildTheme(Brightness.light),
   darkTheme: buildTheme(Brightness.dark),
   routerConfig: ref.watch(routerProvider),
