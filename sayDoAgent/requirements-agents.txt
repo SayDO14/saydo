@@ -1,0 +1,7 @@
+# Extra packages for the LangGraph supervisor / event / task / email agents
+# (experiments, not needed by the deployed API).
+-r requirements.txt
+langchain>=0.3.0
+langchain-google-genai>=2.0.0
+langgraph>=0.2.0
+langgraph-checkpoint>=2.0.0
