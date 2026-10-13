@@ -393,66 +393,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accountCreated => 'تم إنشاء الحساب بنجاح!';
 
   @override
-  String get authInvalidEmail =>
-      'يرجى إدخال بريد إلكتروني صالح.';
-
-  @override
-  String get authErrInvalidCredentials =>
-      'البريد الإلكتروني أو كلمة المرور غير صحيحة. حاول مرة أخرى.';
-
-  @override
-  String get authErrEmailNotConfirmed =>
-      'يرجى تأكيد بريدك الإلكتروني أولاً. تحقق من صندوق الوارد.';
-
-  @override
-  String get authErrUserExists =>
-      'يوجد حساب بهذا البريد الإلكتروني بالفعل. جرّب تسجيل الدخول.';
-
-  @override
-  String get authErrNetwork =>
-      'لا يوجد اتصال. تحقق من الإنترنت وحاول مرة أخرى.';
-
-  @override
-  String get authErrWeakPassword =>
-      'كلمة المرور ضعيفة. استخدم 6 أحرف على الأقل.';
-
-  @override
-  String get authErrRateLimit =>
-      'محاولات كثيرة. انتظر قليلاً ثم حاول مرة أخرى.';
-
-  @override
-  String get authErrProviderDisabled =>
-      'طريقة تسجيل الدخول هذه غير متاحة بعد.';
-
-  @override
-  String get authErrUnknown =>
-      'حدث خطأ ما. يرجى المحاولة مرة أخرى.';
-
-  @override
-  String get authConfirmEmailSent =>
-      'تم إنشاء الحساب! أكّد بريدك الإلكتروني ثم سجّل الدخول.';
-
-  @override
-  String get forgotPassword =>
-      'نسيت كلمة المرور؟';
-
-  @override
-  String get forgotPasswordTitle =>
-      'إعادة تعيين كلمة المرور';
-
-  @override
-  String get forgotPasswordHint =>
-      'أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين.';
-
-  @override
-  String get forgotPasswordSend =>
-      'إرسال الرابط';
-
-  @override
-  String get forgotPasswordSent =>
-      'إذا كان هناك حساب بهذا البريد، فقد تم إرسال رابط إعادة التعيين.';
-
-  @override
   String loginError(String error) {
     return 'خطأ في تسجيل الدخول: $error';
   }

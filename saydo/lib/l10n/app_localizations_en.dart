@@ -394,66 +394,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountCreated => 'Account created successfully!';
 
   @override
-  String get authInvalidEmail =>
-      'Please enter a valid email address.';
-
-  @override
-  String get authErrInvalidCredentials =>
-      'Incorrect email or password. Please try again.';
-
-  @override
-  String get authErrEmailNotConfirmed =>
-      'Please confirm your email first. Check your inbox.';
-
-  @override
-  String get authErrUserExists =>
-      'An account with this email already exists. Try signing in.';
-
-  @override
-  String get authErrNetwork =>
-      'No connection. Check your internet and try again.';
-
-  @override
-  String get authErrWeakPassword =>
-      'Password is too weak. Use at least 6 characters.';
-
-  @override
-  String get authErrRateLimit =>
-      'Too many attempts. Please wait a moment and try again.';
-
-  @override
-  String get authErrProviderDisabled =>
-      'This sign-in method isn\'t available yet.';
-
-  @override
-  String get authErrUnknown =>
-      'Something went wrong. Please try again.';
-
-  @override
-  String get authConfirmEmailSent =>
-      'Account created! Confirm your email, then sign in.';
-
-  @override
-  String get forgotPassword =>
-      'Forgot password?';
-
-  @override
-  String get forgotPasswordTitle =>
-      'Reset your password';
-
-  @override
-  String get forgotPasswordHint =>
-      'Enter your email and we\'ll send you a reset link.';
-
-  @override
-  String get forgotPasswordSend =>
-      'Send link';
-
-  @override
-  String get forgotPasswordSent =>
-      'If an account exists for this email, a reset link is on its way.';
-
-  @override
   String loginError(String error) {
     return 'Sign-in error: $error';
   }

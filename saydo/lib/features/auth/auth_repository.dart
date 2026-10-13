@@ -63,16 +63,6 @@ class AuthRepository {
     );
   }
 
-  /// Sends a password-reset email. The link opens the app through the same
-  /// deep link as OAuth; the user is then signed in and can set a new
-  /// password from Settings > Security.
-  Future<void> resetPassword(String email) {
-    return _client.auth.resetPasswordForEmail(
-      email,
-      redirectTo: AppConfig.authRedirect,
-    );
-  }
-
   Future<void> signOut() => _client.auth.signOut();
 }
 

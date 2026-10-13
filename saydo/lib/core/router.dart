@@ -119,21 +119,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/contacts',
         builder: (context, state) => const ContactsScreen(),
       ),
-<<<<<<< HEAD
-=======
-      ShellRoute(
-        builder: (context, state, navigationShell) =>
-            AppShell(navigationShell: navigationShell),
-        routes: [
-          GoRoute(path: '/', builder: (_, __) => const HomeScreen()),
-          GoRoute(path: '/tasks', builder: (_, __) => const TasksScreen()),
-          GoRoute(path: '/events', builder: (_, __) => const EventsScreen()),
-          GoRoute(path: '/emails', builder: (_, __) => const EmailsScreen()),
-          GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
-        ],
-      ),
-      GoRoute(path: '/contacts', builder: (_, __) => const ContactsScreen()),
->>>>>>> pr-3
       GoRoute(path: '/onboarding', builder: (_, __) => const OnboardingScreen()),
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
     ],

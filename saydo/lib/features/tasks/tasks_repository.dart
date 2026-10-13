@@ -8,10 +8,6 @@ final tasksRepositoryProvider = Provider<TasksRepository>(
 );
 
 /// Tâches actives et terminées de l'utilisateur.
-<<<<<<< HEAD
-=======
-/// Incomplete tasks first, then by due date (nulls last), then oldest first.
->>>>>>> pr-3
 final tasksProvider = FutureProvider.autoDispose<List<TaskItem>>(
   (ref) => ref.watch(tasksRepositoryProvider).fetch(),
 );
@@ -50,25 +46,6 @@ class TasksRepository {
       'notes': (notes == null || notes.trim().isEmpty) ? null : notes.trim(),
       'due_at': dueAt?.toUtc().toIso8601String(),
     }).eq('id', id);
-<<<<<<< HEAD
-=======
-        .order('done', ascending: true)
-        .order('due_at', ascending: true, nullsFirst: false)
-        .order('created_at', ascending: true);
-    return rows.map(TaskItem.fromJson).toList();
-  }
-
-  /// Toggle done status. Sets/clears completed_at accordingly.
-  Future<void> toggleDone(String id, bool done) async {
-    await _db.from('tasks').update({
-      'done': done,
-      'completed_at': done ? DateTime.now().toIso8601String() : null,
-    }).eq('id', id);
-  }
-
-  Future<void> updateTitle(String id, String title) async {
-    await _db.from('tasks').update({'title': title.trim()}).eq('id', id);
->>>>>>> pr-3
   }
 
   Future<void> delete(String id) async {

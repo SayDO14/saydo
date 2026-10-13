@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../onboarding/onboarding_screen.dart';
-import 'auth_errors.dart';
 import 'auth_providers.dart';
 import 'package:saydo/l10n/app_localizations.dart';
 
@@ -35,64 +34,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
-  static final _emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-  bool _isValidEmail(String v) => _emailRegex.hasMatch(v);
-
-  /// One consistent, readable message style for errors and confirmations.
-  void _showMessage(String text, {bool error = true}) {
-    if (!mounted) return;
-    final accent =
-        error ? const Color(0xFFFF6B6B) : const Color(0xFF34D399);
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          duration: const Duration(seconds: 5),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-            side: BorderSide(color: accent.withValues(alpha: 0.5)),
-          ),
-          backgroundColor:
-              error ? const Color(0xFF2A1218) : const Color(0xFF0E2A22),
-          content: Row(
-            children: [
-              Icon(
-                error
-                    ? Icons.error_outline_rounded
-                    : Icons.check_circle_outline_rounded,
-                color: accent,
-                size: 22,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  text,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    height: 1.35,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-  }
-
   Future<void> _handleLogin() async {
-    final l = AppLocalizations.of(context)!;
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
     if (email.isEmpty || password.isEmpty) {
-      _showMessage(l.loginFillFields);
-      return;
-    }
-    if (!_isValidEmail(email)) {
-      _showMessage(l.authInvalidEmail);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.loginFillFields)),
+      );
       return;
     }
 
@@ -108,33 +57,39 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         context.go('/');
       }
     } catch (e) {
-      _showMessage(friendlyAuthError(l, e));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.loginError('$e'))),
+      );
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
   Future<void> _handleSignUp() async {
-    final l = AppLocalizations.of(context)!;
     final fullName = _fullNameController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
 
     if (email.isEmpty || password.isEmpty) {
-      _showMessage(l.signupFillFields);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.signupFillFields)),
+      );
       return;
     }
-    if (!_isValidEmail(email)) {
-      _showMessage(l.authInvalidEmail);
-      return;
-    }
-    if (password.length < 6) {
-      _showMessage(l.passwordTooShort);
-      return;
-    }
+
     if (password != confirmPassword) {
-      _showMessage(l.passwordsMismatch);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.passwordsMismatch)),
+      );
+      return;
+    }
+
+    if (password.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.passwordTooShort)),
+      );
       return;
     }
 
@@ -145,124 +100,69 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             password: password,
             fullName: fullName,
           );
-
-      // With email confirmation on, Supabase answers an already-used email
-      // with no error and an empty identities list.
-      if (res.user != null && (res.user!.identities?.isEmpty ?? false)) {
-        _showMessage(l.authErrUserExists);
-        return;
-      }
-
       await markOnboardingSeen();
       if (!mounted) return;
       if (res.session != null) {
-        // Signed in immediately -> go straight into the app.
+        // Utilisateur connecté immédiatement -> entrer directement dans l'application
         context.go('/');
       } else {
-        _showMessage(l.authConfirmEmailSent, error: false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.accountCreated)),
+        );
         setState(() => _isSignUp = false);
       }
     } catch (e) {
-      _showMessage(friendlyAuthError(l, e));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.signupError('$e'))),
+      );
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
-  Future<void> _handleSocial(Future<void> Function() signIn) async {
-    final l = AppLocalizations.of(context)!;
+  Future<void> _handleGoogleSignIn() async {
     setState(() => _loading = true);
     try {
       await markOnboardingSeen();
-      await signIn();
+      await ref.read(authRepositoryProvider).signInWithGoogle();
     } catch (e) {
-      _showMessage(friendlyAuthError(l, e));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.googleError('$e'))),
+      );
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
-  Future<void> _handleGoogleSignIn() =>
-      _handleSocial(ref.read(authRepositoryProvider).signInWithGoogle);
-
-  Future<void> _handleAppleSignIn() =>
-      _handleSocial(ref.read(authRepositoryProvider).signInWithApple);
-
-  Future<void> _handleFacebookSignIn() =>
-      _handleSocial(ref.read(authRepositoryProvider).signInWithFacebook);
-
-  Future<void> _showForgotPasswordDialog() async {
-    final l = AppLocalizations.of(context)!;
-    final controller = TextEditingController(text: _emailController.text.trim());
-
-    final email = await showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF13172B),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
-          l.forgotPasswordTitle,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-            fontSize: 19,
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l.forgotPasswordHint,
-              style: const TextStyle(
-                color: Color(0xFF94A3B8),
-                fontSize: 14,
-                height: 1.4,
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: controller,
-              autofocus: true,
-              keyboardType: TextInputType.emailAddress,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: l.fieldEmail,
-                hintStyle: const TextStyle(color: Color(0xFF8E9BB5)),
-                filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.06),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(l.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: Text(l.forgotPasswordSend),
-          ),
-        ],
-      ),
-    );
-
-    if (email == null) return; // dismissed
-    if (!_isValidEmail(email)) {
-      _showMessage(l.authInvalidEmail);
-      return;
-    }
+  Future<void> _handleAppleSignIn() async {
+    setState(() => _loading = true);
     try {
-      await ref.read(authRepositoryProvider).resetPassword(email);
-      // Same message whether or not the account exists (no account probing).
-      _showMessage(l.forgotPasswordSent, error: false);
+      await markOnboardingSeen();
+      await ref.read(authRepositoryProvider).signInWithApple();
     } catch (e) {
-      _showMessage(friendlyAuthError(l, e));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.appleError('$e'))),
+      );
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _handleFacebookSignIn() async {
+    setState(() => _loading = true);
+    try {
+      await markOnboardingSeen();
+      await ref.read(authRepositoryProvider).signInWithFacebook();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.facebookError('$e'))),
+      );
+    } finally {
+      if (mounted) setState(() => _loading = false);
     }
   }
 
@@ -520,27 +420,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
 
-                  // Forgot password
-                  Align(
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: GestureDetector(
-                      onTap: _showForgotPasswordDialog,
-                      behavior: HitTestBehavior.opaque,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 12, bottom: 2),
-                        child: Text(
-                          AppLocalizations.of(context)!.forgotPassword,
-                          style: const TextStyle(
-                            color: Color(0xFF7AA2FF),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
 
                   // Primary Button (Sign In)
                   _buildPrimaryButton(

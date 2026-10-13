@@ -367,20 +367,5 @@
         "type": "String"
       }
     }
-  },
-  "authInvalidEmail": "Please enter a valid email address.",
-  "authErrInvalidCredentials": "Incorrect email or password. Please try again.",
-  "authErrEmailNotConfirmed": "Please confirm your email first. Check your inbox.",
-  "authErrUserExists": "An account with this email already exists. Try signing in.",
-  "authErrNetwork": "No connection. Check your internet and try again.",
-  "authErrWeakPassword": "Password is too weak. Use at least 6 characters.",
-  "authErrRateLimit": "Too many attempts. Please wait a moment and try again.",
-  "authErrProviderDisabled": "This sign-in method isn't available yet.",
-  "authErrUnknown": "Something went wrong. Please try again.",
-  "authConfirmEmailSent": "Account created! Confirm your email, then sign in.",
-  "forgotPassword": "Forgot password?",
-  "forgotPasswordTitle": "Reset your password",
-  "forgotPasswordHint": "Enter your email and we'll send you a reset link.",
-  "forgotPasswordSend": "Send link",
-  "forgotPasswordSent": "If an account exists for this email, a reset link is on its way."
+  }
 }
