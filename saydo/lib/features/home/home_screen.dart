@@ -81,6 +81,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       }
     });
 
+            const SnackBar(content: Text('Saved. It will sync shortly.')),
+          );
+        }
+      }
+    });
+
+    final theme = Theme.of(context);
     final recording = voice.status == VoiceStatus.recording;
     final uploading = voice.status == VoiceStatus.uploading;
 
