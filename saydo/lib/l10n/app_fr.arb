@@ -367,5 +367,20 @@
         "type": "String"
       }
     }
-  }
+  },
+  "authInvalidEmail": "Saisissez une adresse e-mail valide.",
+  "authErrInvalidCredentials": "E-mail ou mot de passe incorrect. Réessayez.",
+  "authErrEmailNotConfirmed": "Confirmez d'abord votre e-mail : vérifiez votre boîte de réception.",
+  "authErrUserExists": "Un compte existe déjà avec cet e-mail. Essayez de vous connecter.",
+  "authErrNetwork": "Pas de connexion. Vérifiez votre internet et réessayez.",
+  "authErrWeakPassword": "Mot de passe trop faible. Utilisez au moins 6 caractères.",
+  "authErrRateLimit": "Trop de tentatives. Patientez un instant puis réessayez.",
+  "authErrProviderDisabled": "Cette méthode de connexion n'est pas encore disponible.",
+  "authErrUnknown": "Une erreur est survenue. Veuillez réessayer.",
+  "authConfirmEmailSent": "Compte créé ! Confirmez votre e-mail, puis connectez-vous.",
+  "forgotPassword": "Mot de passe oublié ?",
+  "forgotPasswordTitle": "Réinitialiser le mot de passe",
+  "forgotPasswordHint": "Saisissez votre e-mail et nous vous enverrons un lien de réinitialisation.",
+  "forgotPasswordSend": "Envoyer le lien",
+  "forgotPasswordSent": "Si un compte existe pour cet e-mail, un lien de réinitialisation vient d'être envoyé."
 }

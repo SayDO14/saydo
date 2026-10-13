@@ -19,14 +19,24 @@ venv/
 .idea/
 .DS_Store
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+saydo/.dart_tool/
+saydo/build/
+
+saydo/.flutter-plugins-dependencies
+>>>>>>> pr-3
 
 dart_tool/
 .dart_tool/
 build/
 *.log
+<<<<<<< HEAD
 =======
 saydo/.dart_tool/
 saydo/build/
 
 saydo/.flutter-plugins-dependencies
 >>>>>>> feature/profile-settings-ui
+=======
+>>>>>>> pr-3

@@ -23,10 +23,17 @@ dart_tool/
 .dart_tool/
 build/
 <<<<<<< HEAD
+<<<<<<< HEAD
 *.log
 =======
+=======
+>>>>>>> pr-3
 *.log
 
 **/.dart_tool/
 **/.flutter-plugins-dependencies
+<<<<<<< HEAD
 >>>>>>> feature/profile-settings-ui
+=======
+*.log
+>>>>>>> pr-3

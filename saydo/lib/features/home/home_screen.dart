@@ -81,6 +81,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       }
     });
 
+<<<<<<< HEAD
+=======
+            const SnackBar(content: Text('Saved. It will sync shortly.')),
+          );
+        }
+      }
+    });
+
+    final theme = Theme.of(context);
+>>>>>>> pr-3
     final recording = voice.status == VoiceStatus.recording;
     final uploading = voice.status == VoiceStatus.uploading;
 
