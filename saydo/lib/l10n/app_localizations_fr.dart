@@ -399,66 +399,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get accountCreated => 'Compte créé avec succès !';
 
   @override
-  String get authInvalidEmail =>
-      'Saisissez une adresse e-mail valide.';
-
-  @override
-  String get authErrInvalidCredentials =>
-      'E-mail ou mot de passe incorrect. Réessayez.';
-
-  @override
-  String get authErrEmailNotConfirmed =>
-      'Confirmez d\'abord votre e-mail : vérifiez votre boîte de réception.';
-
-  @override
-  String get authErrUserExists =>
-      'Un compte existe déjà avec cet e-mail. Essayez de vous connecter.';
-
-  @override
-  String get authErrNetwork =>
-      'Pas de connexion. Vérifiez votre internet et réessayez.';
-
-  @override
-  String get authErrWeakPassword =>
-      'Mot de passe trop faible. Utilisez au moins 6 caractères.';
-
-  @override
-  String get authErrRateLimit =>
-      'Trop de tentatives. Patientez un instant puis réessayez.';
-
-  @override
-  String get authErrProviderDisabled =>
-      'Cette méthode de connexion n\'est pas encore disponible.';
-
-  @override
-  String get authErrUnknown =>
-      'Une erreur est survenue. Veuillez réessayer.';
-
-  @override
-  String get authConfirmEmailSent =>
-      'Compte créé ! Confirmez votre e-mail, puis connectez-vous.';
-
-  @override
-  String get forgotPassword =>
-      'Mot de passe oublié ?';
-
-  @override
-  String get forgotPasswordTitle =>
-      'Réinitialiser le mot de passe';
-
-  @override
-  String get forgotPasswordHint =>
-      'Saisissez votre e-mail et nous vous enverrons un lien de réinitialisation.';
-
-  @override
-  String get forgotPasswordSend =>
-      'Envoyer le lien';
-
-  @override
-  String get forgotPasswordSent =>
-      'Si un compte existe pour cet e-mail, un lien de réinitialisation vient d\'être envoyé.';
-
-  @override
   String loginError(String error) {
     return 'Erreur de connexion : $error';
   }
@@ -664,16 +604,19 @@ class AppLocalizationsFr extends AppLocalizations {
       'Ex : « Rendez-vous demain à 14h avec Sophie » ou « Acheter du lait »';
 
   @override
-  String get voiceErrorMic => 'Accès au microphone refusé. Autorise-le dans les réglages.';
+  String get voiceErrorMic =>
+      'Accès au microphone refusé. Autorise-le dans les réglages.';
 
   @override
   String get voiceErrorNothing => 'Rien n\'a été enregistré. Réessaie.';
 
   @override
-  String get voiceErrorNetwork => 'Impossible de joindre le serveur. Vérifie ta connexion.';
+  String get voiceErrorNetwork =>
+      'Impossible de joindre le serveur. Vérifie ta connexion.';
 
   @override
-  String get voiceErrorServer => 'Le serveur a rencontré un problème. Réessaie dans un instant.';
+  String get voiceErrorServer =>
+      'Le serveur a rencontré un problème. Réessaie dans un instant.';
 
   @override
   String get gotIt => 'Compris';
@@ -721,4 +664,59 @@ class AppLocalizationsFr extends AppLocalizations {
   String previewPeople(String people) {
     return 'Personnes : $people';
   }
+
+  @override
+  String get authInvalidEmail => 'Saisissez une adresse e-mail valide.';
+
+  @override
+  String get authErrInvalidCredentials =>
+      'E-mail ou mot de passe incorrect. Réessayez.';
+
+  @override
+  String get authErrEmailNotConfirmed =>
+      'Confirmez d\'abord votre e-mail : vérifiez votre boîte de réception.';
+
+  @override
+  String get authErrUserExists =>
+      'Un compte existe déjà avec cet e-mail. Essayez de vous connecter.';
+
+  @override
+  String get authErrNetwork =>
+      'Pas de connexion. Vérifiez votre internet et réessayez.';
+
+  @override
+  String get authErrWeakPassword =>
+      'Mot de passe trop faible. Utilisez au moins 6 caractères.';
+
+  @override
+  String get authErrRateLimit =>
+      'Trop de tentatives. Patientez un instant puis réessayez.';
+
+  @override
+  String get authErrProviderDisabled =>
+      'Cette méthode de connexion n\'est pas encore disponible.';
+
+  @override
+  String get authErrUnknown => 'Une erreur est survenue. Veuillez réessayer.';
+
+  @override
+  String get authConfirmEmailSent =>
+      'Compte créé ! Confirmez votre e-mail, puis connectez-vous.';
+
+  @override
+  String get forgotPassword => 'Mot de passe oublié ?';
+
+  @override
+  String get forgotPasswordTitle => 'Réinitialiser le mot de passe';
+
+  @override
+  String get forgotPasswordHint =>
+      'Saisissez votre e-mail et nous vous enverrons un lien de réinitialisation.';
+
+  @override
+  String get forgotPasswordSend => 'Envoyer le lien';
+
+  @override
+  String get forgotPasswordSent =>
+      'Si un compte existe pour cet e-mail, un lien de réinitialisation vient d\'être envoyé.';
 }

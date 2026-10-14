@@ -52,6 +52,8 @@ class SayDoApp extends ConsumerWidget {
   locale: ref.watch(localeProvider),
   supportedLocales: AppLocalizations.supportedLocales,
   localizationsDelegates: AppLocalizations.localizationsDelegates,
+  debugShowCheckedModeBanner: false
+  ,
 );
   }
 }
