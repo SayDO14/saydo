@@ -1,24 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:saydo/l10n/app_localizations.dart';
+import '../../core/app_settings.dart';
 import '../../core/locale.dart';
-
-const _timezoneKey = 'setting_timezone';
-const _languageKey = 'setting_language';
-const _notificationsKey = 'setting_notifications';
-
-final supportedTimezones = [
-  'Afrique/Algiers',
-  'Afrique/Casablanca',
-  'Afrique/Tunis',
-  'Europe/Paris',
-  'Europe/London',
-  'America/New_York',
-  'America/Los_Angeles',
-  'Asia/Dubai',
-];
 
 const supportedLanguages = [
   {'code': 'fr', 'label': 'Français'},
@@ -34,38 +19,19 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-
-
-  String _timezone = 'Afrique/Algiers';
-  String _language = 'fr';
-  bool _notifications = true;
-  bool _loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPrefs();
-  }
-
-  Future<void> _loadPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _timezone = prefs.getString(_timezoneKey) ?? 'Afrique/Algiers';
-      _language = prefs.getString(_languageKey) ?? 'fr';
-      _notifications = prefs.getBool(_notificationsKey) ?? true;
-      _loading = false;
-    });
-  }
-
-  String get _languageLabel {
+  String _languageLabel(String code) {
     return supportedLanguages.firstWhere(
-      (l) => l['code'] == _language,
-      orElse: () => {'code': _language, 'label': _language},
+      (l) => l['code'] == code,
+      orElse: () => {'code': code, 'label': code},
     )['label']!;
   }
 
   @override
   Widget build(BuildContext context) {
+    final language = ref.watch(localeProvider).languageCode;
+    final timezone = ref.watch(timezoneProvider);
+    final notifications = ref.watch(notificationsProvider);
+
     return Scaffold(
       backgroundColor: const Color(0xFF070818),
       body: Stack(
@@ -87,11 +53,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
 
           SafeArea(
-            child: _loading
-                ? const Center(
-                    child: CircularProgressIndicator(color: Color(0xFF4E78FF)),
-                  )
-                : ListView(
+            child: ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     children: [
                       // Header with back button & SayDo / Paramètres
@@ -170,7 +132,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       _SettingsItemCard(
                         icon: Icons.language_rounded,
                         title: AppLocalizations.of(context)!.language,
-                        subtitle: _languageLabel,
+                        subtitle: _languageLabel(language),
                         onTap: () => _pickLanguage(context),
                       ),
                       const SizedBox(height: 12),
@@ -179,7 +141,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       _SettingsItemCard(
                         icon: Icons.access_time_rounded,
                         title: AppLocalizations.of(context)!.settingsTimezone,
-                        subtitle: _timezone,
+                        subtitle: timezone,
                         onTap: () => _pickTimezone(context),
                       ),
                       const SizedBox(height: 12),
@@ -212,16 +174,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               ),
                             ),
                             Switch.adaptive(
-                              value: _notifications,
+                              value: notifications,
                               activeColor: Colors.white,
                               activeTrackColor: const Color(0xFF2853DE),
                               inactiveTrackColor: const Color(0xFF1F224D),
                               inactiveThumbColor: Colors.white70,
-                              onChanged: (val) async {
-                                final prefs = await SharedPreferences.getInstance();
-                                await prefs.setBool(_notificationsKey, val);
-                                setState(() => _notifications = val);
-                              },
+                              onChanged: (val) =>
+                                  ref.read(notificationsProvider.notifier).set(val),
                             ),
                           ],
                         ),
@@ -284,7 +243,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
                 const SizedBox(height: 12),
                 ...supportedTimezones.map((tz) {
-                  final isSelected = tz == _timezone;
+                  final isSelected = tz == ref.read(timezoneProvider);
                   return ListTile(
                     title: Text(
                       tz,
@@ -307,9 +266,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
 
     if (picked != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_timezoneKey, picked);
-      setState(() => _timezone = picked);
+      await ref.read(timezoneProvider.notifier).set(picked);
     }
   }
 
@@ -339,7 +296,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ...supportedLanguages.map((lang) {
                   final code = lang['code']!;
                   final label = lang['label']!;
-                  final isSelected = code == _language;
+                  final isSelected = code == ref.read(localeProvider).languageCode;
                   return ListTile(
                     title: Text(
                       label,
@@ -363,7 +320,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     if (picked != null) {
   await ref.read(localeProvider.notifier).setLanguage(picked);
-  setState(() => _language = picked);
 }
   }
 

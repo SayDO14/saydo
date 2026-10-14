@@ -826,6 +826,96 @@ abstract class AppLocalizations {
   /// **'Erreur de connexion : {error}'**
   String loginError(String error);
 
+  /// No description provided for @authInvalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address.'**
+  String get authInvalidEmail;
+
+  /// No description provided for @authErrInvalidCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect email or password. Please try again.'**
+  String get authErrInvalidCredentials;
+
+  /// No description provided for @authErrEmailNotConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Please confirm your email first. Check your inbox.'**
+  String get authErrEmailNotConfirmed;
+
+  /// No description provided for @authErrUserExists.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email already exists. Try signing in.'**
+  String get authErrUserExists;
+
+  /// No description provided for @authErrNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection. Check your internet and try again.'**
+  String get authErrNetwork;
+
+  /// No description provided for @authErrWeakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is too weak. Use at least 6 characters.'**
+  String get authErrWeakPassword;
+
+  /// No description provided for @authErrRateLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please wait a moment and try again.'**
+  String get authErrRateLimit;
+
+  /// No description provided for @authErrProviderDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'This sign-in method isn\'t available yet.'**
+  String get authErrProviderDisabled;
+
+  /// No description provided for @authErrUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get authErrUnknown;
+
+  /// No description provided for @authConfirmEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created! Confirm your email, then sign in.'**
+  String get authConfirmEmailSent;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPassword;
+
+  /// No description provided for @forgotPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset your password'**
+  String get forgotPasswordTitle;
+
+  /// No description provided for @forgotPasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email and we\'ll send you a reset link.'**
+  String get forgotPasswordHint;
+
+  /// No description provided for @forgotPasswordSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send link'**
+  String get forgotPasswordSend;
+
+  /// No description provided for @forgotPasswordSent.
+  ///
+  /// In en, this message translates to:
+  /// **'If an account exists for this email, a reset link is on its way.'**
+  String get forgotPasswordSent;
+
   /// No description provided for @signupError.
   ///
   /// In fr, this message translates to:
@@ -1180,6 +1270,30 @@ abstract class AppLocalizations {
   /// **'Ex : « Rendez-vous demain à 14h avec Sophie » ou « Acheter du lait »'**
   String get voiceExample;
 
+  /// No description provided for @voiceErrorMic.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accès au microphone refusé. Autorise-le dans les réglages.'**
+  String get voiceErrorMic;
+
+  /// No description provided for @voiceErrorNothing.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien n'a été enregistré. Réessaie.'**
+  String get voiceErrorNothing;
+
+  /// No description provided for @voiceErrorNetwork.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de joindre le serveur. Vérifie ta connexion.'**
+  String get voiceErrorNetwork;
+
+  /// No description provided for @voiceErrorServer.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le serveur a rencontré un problème. Réessaie dans un instant.'**
+  String get voiceErrorServer;
+
   /// No description provided for @gotIt.
   ///
   /// In fr, this message translates to:
@@ -1245,96 +1359,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Personnes : {people}'**
   String previewPeople(String people);
-
-  /// No description provided for @authInvalidEmail.
-  ///
-  /// In fr, this message translates to:
-  /// **'Saisissez une adresse e-mail valide.'**
-  String get authInvalidEmail;
-
-  /// No description provided for @authErrInvalidCredentials.
-  ///
-  /// In fr, this message translates to:
-  /// **'E-mail ou mot de passe incorrect. Réessayez.'**
-  String get authErrInvalidCredentials;
-
-  /// No description provided for @authErrEmailNotConfirmed.
-  ///
-  /// In fr, this message translates to:
-  /// **'Confirmez d\'abord votre e-mail : vérifiez votre boîte de réception.'**
-  String get authErrEmailNotConfirmed;
-
-  /// No description provided for @authErrUserExists.
-  ///
-  /// In fr, this message translates to:
-  /// **'Un compte existe déjà avec cet e-mail. Essayez de vous connecter.'**
-  String get authErrUserExists;
-
-  /// No description provided for @authErrNetwork.
-  ///
-  /// In fr, this message translates to:
-  /// **'Pas de connexion. Vérifiez votre internet et réessayez.'**
-  String get authErrNetwork;
-
-  /// No description provided for @authErrWeakPassword.
-  ///
-  /// In fr, this message translates to:
-  /// **'Mot de passe trop faible. Utilisez au moins 6 caractères.'**
-  String get authErrWeakPassword;
-
-  /// No description provided for @authErrRateLimit.
-  ///
-  /// In fr, this message translates to:
-  /// **'Trop de tentatives. Patientez un instant puis réessayez.'**
-  String get authErrRateLimit;
-
-  /// No description provided for @authErrProviderDisabled.
-  ///
-  /// In fr, this message translates to:
-  /// **'Cette méthode de connexion n\'est pas encore disponible.'**
-  String get authErrProviderDisabled;
-
-  /// No description provided for @authErrUnknown.
-  ///
-  /// In fr, this message translates to:
-  /// **'Une erreur est survenue. Veuillez réessayer.'**
-  String get authErrUnknown;
-
-  /// No description provided for @authConfirmEmailSent.
-  ///
-  /// In fr, this message translates to:
-  /// **'Compte créé ! Confirmez votre e-mail, puis connectez-vous.'**
-  String get authConfirmEmailSent;
-
-  /// No description provided for @forgotPassword.
-  ///
-  /// In fr, this message translates to:
-  /// **'Mot de passe oublié ?'**
-  String get forgotPassword;
-
-  /// No description provided for @forgotPasswordTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Réinitialiser le mot de passe'**
-  String get forgotPasswordTitle;
-
-  /// No description provided for @forgotPasswordHint.
-  ///
-  /// In fr, this message translates to:
-  /// **'Saisissez votre e-mail et nous vous enverrons un lien de réinitialisation.'**
-  String get forgotPasswordHint;
-
-  /// No description provided for @forgotPasswordSend.
-  ///
-  /// In fr, this message translates to:
-  /// **'Envoyer le lien'**
-  String get forgotPasswordSend;
-
-  /// No description provided for @forgotPasswordSent.
-  ///
-  /// In fr, this message translates to:
-  /// **'Si un compte existe pour cet e-mail, un lien de réinitialisation vient d\'être envoyé.'**
-  String get forgotPasswordSent;
 }
 
 class _AppLocalizationsDelegate

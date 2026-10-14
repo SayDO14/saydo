@@ -3,12 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../auth/auth_providers.dart';
-import '../confirm/proposal_sheet.dart';
-import '../contacts/contacts_repository.dart';
-import '../emails/emails_repository.dart';
-import '../events/events_repository.dart';
-import '../tasks/tasks_repository.dart';
 import '../voice/voice_controller.dart';
+import '../voice/voice_flow.dart';
 import 'package:saydo/l10n/app_localizations.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -52,33 +48,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   Widget build(BuildContext context) {
     final voice = ref.watch(voiceControllerProvider);
 
-    ref.listen(voiceControllerProvider, (prev, next) async {
+    ref.listen(voiceControllerProvider, (prev, next) {
       final result = next.result;
-      if (next.status == VoiceStatus.done &&
-          prev?.status != VoiceStatus.done &&
-          result != null &&
-          result.isProposal) {
-        final outcome = await showModalBottomSheet<ProposalOutcome>(
-          context: context,
-          isScrollControlled: true,
-          isDismissible: false,
-          enableDrag: false,
-          builder: (_) => ProposalSheet(result: result),
-        );
-        ref.read(voiceControllerProvider.notifier).reset();
-        if (outcome == ProposalOutcome.saved) {
-          ref.invalidate(eventsProvider);
-          ref.invalidate(contactsProvider);
-          ref.invalidate(tasksProvider);
-          ref.invalidate(emailsProvider);
-        }
-        if (outcome == ProposalOutcome.saved && context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(AppLocalizations.of(context)!.homeSaved)),
-          );
-        }
+      if (next.status != VoiceStatus.done ||
+          prev?.status == VoiceStatus.done ||
+          result == null ||
+          !result.isProposal) {
+        return;
       }
+      // Home stays mounted inside the IndexedStack. When the capture came
+      // from the voice sheet (opened on another tab), that flow already
+      // handles the result, so stand down to avoid a second proposal sheet.
+      if (ref.read(voiceSheetOpenProvider)) return;
+      presentProposal(context, ref, result);
     });
 
     final recording = voice.status == VoiceStatus.recording;
@@ -378,7 +360,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                                 const EdgeInsets.symmetric(horizontal: 32),
                             child: Text(
                               voice.status == VoiceStatus.error
-                                  ? (voice.error ?? AppLocalizations.of(context)!.errorGeneric)
+                                  ? voiceErrorText(AppLocalizations.of(context)!, voice.error)
                                   : voice.status == VoiceStatus.recording
                                       ? AppLocalizations.of(context)!.homeListening
                                       : voice.status == VoiceStatus.uploading

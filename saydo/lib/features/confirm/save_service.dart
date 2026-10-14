@@ -2,16 +2,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/app_settings.dart';
 import '../voice/parse_result.dart';
 import 'proposal_data.dart';
 
 final saveServiceProvider = Provider<SaveService>(
-  (ref) => SaveService(Supabase.instance.client),
+  (ref) => SaveService(Supabase.instance.client, () => ref.read(timezoneProvider)),
 );
 
 class SaveService {
-  SaveService(this._db);
+  SaveService(this._db, this._timezone);
   final SupabaseClient _db;
+
+  /// Current timezone chosen in Settings (read at save time, not cached).
+  final String Function() _timezone;
 
   String get _uid => _db.auth.currentUser!.id;
 
@@ -98,7 +102,7 @@ class SaveService {
       'user_id': _uid,
       'title': d.title.trim(),
       'start_at': isoWithOffset(start),
-      'timezone': 'Africa/Algiers', // TODO: from profile (settings feature)
+      'timezone': _timezone(),
       'related_people': d.people,
       'source_transcript': transcript,
       'capture_id': captureId,

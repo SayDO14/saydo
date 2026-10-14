@@ -1,53 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../confirm/proposal_sheet.dart';
-import '../events/events_repository.dart';
-import '../tasks/tasks_repository.dart';
 import 'parse_result.dart';
 import 'voice_controller.dart';
+import 'voice_flow.dart';
 import 'package:saydo/l10n/app_localizations.dart';
 
 Future<void> showVoiceAssistant(BuildContext context, WidgetRef ref) async {
   ref.read(voiceControllerProvider.notifier).reset();
+  final sheetOpen = ref.read(voiceSheetOpenProvider.notifier)..set(true);
 
-  final result = await showModalBottomSheet<ParseResult?>( 
-    context: context,
-    backgroundColor: Colors.transparent,
-    isScrollControlled: true,
-    builder: (sheetContext) => const _VoiceSheetContent(),
-  );
-
-  if (result != null && result.isProposal && context.mounted) {
-    final outcome = await showModalBottomSheet<ProposalOutcome>(
+  final ParseResult? result;
+  try {
+    result = await showModalBottomSheet<ParseResult?>(
       context: context,
+      backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      isDismissible: false,
-      enableDrag: false,
-      builder: (_) => ProposalSheet(result: result),
+      builder: (sheetContext) => const _VoiceSheetContent(),
     );
+  } finally {
+    sheetOpen.set(false);
+  }
 
-    ref.read(voiceControllerProvider.notifier).reset();
-    if (outcome == ProposalOutcome.saved) {
-      ref.invalidate(eventsProvider);
-      ref.invalidate(tasksProvider);
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
-                SizedBox(width: 10),
-                Text(AppLocalizations.of(context)!.voiceSaved),
-              ],
-            ),
-            backgroundColor: Color(0xFF10B981),
-            behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 3),
-          ),
-        );
-      }
-    }
+  if (result != null && context.mounted) {
+    await presentProposal(context, ref, result);
   }
 }
 
@@ -100,7 +76,12 @@ class _VoiceSheetContentState extends ConsumerState<_VoiceSheetContent>
       }
     });
 
-    return Container(
+    return PopScope(
+      // Closing the sheet mid-recording must stop the microphone.
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) ref.read(voiceControllerProvider.notifier).cancel();
+      },
+      child: Container(
       decoration: BoxDecoration(
         color: const Color(0xFF0C102C),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
@@ -173,7 +154,7 @@ class _VoiceSheetContentState extends ConsumerState<_VoiceSheetContent>
                   ),
                 ),
                 IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => Navigator.of(context).maybePop(),
                   icon: const Icon(Icons.close_rounded, color: Color(0xFF8E9AC5)),
                 ),
               ],
@@ -260,13 +241,14 @@ class _VoiceSheetContentState extends ConsumerState<_VoiceSheetContent>
             // Status Text
             Text(
               voice.status == VoiceStatus.error
-                  ? (voice.error ?? AppLocalizations.of(context)!.errorGeneric)
+                  ? voiceErrorText(AppLocalizations.of(context)!, voice.error)
                   : recording
                       ? AppLocalizations.of(context)!.voiceListening
                       : uploading
                           ? AppLocalizations.of(context)!.voiceProcessing
                           : voice.status == VoiceStatus.done
-                              ? AppLocalizations.of(context)!.voiceDone
+                              ? (voice.result?.question ??
+                                  AppLocalizations.of(context)!.voiceDone)
                               : AppLocalizations.of(context)!.voiceTapToSpeak,
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -309,6 +291,7 @@ class _VoiceSheetContentState extends ConsumerState<_VoiceSheetContent>
           ],
         ),
       ),
+    ),
     );
   }
 }
