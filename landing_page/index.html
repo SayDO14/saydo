@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="SayDo: speak an appointment, a task or an email. Download the Android app.">
+<title>SayDo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&family=Noto+Sans+Arabic:wght@400;600;800&display=swap">
+<style>
+/* Layout: one calm column of sections; the hero pairs the pitch with a mock of the real confirm-before-save sheet.
+   Color: navy ground taken from the app itself, one electric blue accent, cyan used only on the live waveform. */
+:root {
+  --bg: #F4F6FF;
+  --surface: #FFFFFF;
+  --surface-2: #EAEEFF;
+  --line: #D3DAF6;
+  --fg: #0B0F2B;
+  --muted: #55608E;
+  --accent: #2F5BFF;
+  --accent-ink: #FFFFFF;
+  --wave: #00A9D6;
+  --ok: #0E9F6E;
+  --display: "Bricolage Grotesque", "Noto Sans Arabic", system-ui, sans-serif;
+  --body: "DM Sans", "Noto Sans Arabic", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #070818; --surface: #0F1330; --surface-2: #161B45; --line: #222C68;
+    --fg: #E8ECFF; --muted: #8E9AC5; --accent: #4E78FF; --accent-ink: #FFFFFF;
+    --wave: #00CFFF; --ok: #34D399; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #070818; --surface: #0F1330; --surface-2: #161B45; --line: #222C68;
+  --fg: #E8ECFF; --muted: #8E9AC5; --accent: #4E78FF; --accent-ink: #FFFFFF;
+  --wave: #00CFFF; --ok: #34D399; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 400 17px/1.6 var(--body);
+  padding-block: 20px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+.wrap { max-width: 1040px; margin-inline: auto; }
+
+/* top bar */
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 8px 28px; }
+.brand { font: 800 26px/1 var(--display); letter-spacing: -0.02em; color: var(--accent); }
+.lang { display: flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
+.lang button {
+  font: 600 13px/1 var(--body); border: 0; background: transparent; color: var(--muted);
+  padding: 8px 12px; border-radius: 999px; cursor: pointer; min-height: 36px;
+}
+.lang button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+
+/* hero */
+.hero { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center; padding-block: 24px 56px; }
+.eyebrow { font: 500 13px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 18px; }
+h1 { font: 800 clamp(40px, 7vw, 72px)/1.02 var(--display); letter-spacing: -0.035em; margin: 0 0 20px; text-wrap: balance; }
+h1 em { font-style: normal; color: var(--accent); }
+.lead { font-size: 19px; color: var(--muted); max-width: 46ch; margin: 0 0 30px; }
+.cta { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px; text-decoration: none;
+  background: var(--accent); color: var(--accent-ink); font: 600 17px/1 var(--body);
+  padding: 18px 26px; border-radius: 14px; min-height: 56px;
+  box-shadow: 0 10px 30px -10px var(--accent);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 14px 34px -10px var(--accent); }
+.btn svg { width: 22px; height: 22px; flex: none; }
+.meta { font: 500 13px/1.5 var(--mono); color: var(--muted); }
+.note { margin: 18px 0 0; font-size: 14px; color: var(--muted); }
+
+/* the mock: what the app really shows after you speak */
+.phone { background: var(--surface); border: 1px solid var(--line); border-radius: 28px; padding: 22px; display: grid; gap: 18px; min-width: 0; }
+.wavebox { display: flex; align-items: center; gap: 14px; }
+.mic { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; flex: none; }
+.mic svg { width: 22px; height: 22px; fill: #fff; }
+.wave { display: flex; align-items: center; gap: 3px; height: 40px; flex: 1; min-width: 0; overflow: hidden; }
+.wave i { display: block; width: 4px; border-radius: 3px; background: var(--wave); height: 20%; animation: bounce 1.2s ease-in-out infinite; }
+.wave i:nth-child(3n) { animation-delay: -.3s; } .wave i:nth-child(3n+1) { animation-delay: -.7s; } .wave i:nth-child(4n) { animation-delay: -.5s; }
+@keyframes bounce { 0%,100% { height: 15%; } 50% { height: 95%; } }
+.said { margin: 0; font-size: 15px; color: var(--muted); font-style: italic; }
+.card { border: 1px solid var(--line); background: var(--surface-2); border-radius: 18px; padding: 18px; display: grid; gap: 12px; }
+.card .tag { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.card h3 { margin: 0; font: 600 21px/1.25 var(--display); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 14px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); }
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+.actions span { text-align: center; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 15px; border: 1px solid var(--line); }
+.actions .go { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+/* sections */
+section { padding-block: 40px; border-top: 1px solid var(--line); }
+h2 { font: 800 clamp(26px, 4vw, 38px)/1.1 var(--display); letter-spacing: -0.025em; margin: 0 0 28px; text-wrap: balance; }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; list-style: none; padding: 0; margin: 0; counter-reset: s; }
+.steps li { counter-increment: s; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; min-width: 0; }
+.steps li::before { content: counter(s); display: block; font: 800 40px/1 var(--display); color: var(--accent); margin-bottom: 14px; }
+.steps b, .feat b { display: block; font: 600 19px/1.3 var(--display); margin-bottom: 6px; }
+.steps span, .feat span { color: var(--muted); font-size: 16px; }
+.feats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 40px; }
+.feat { min-width: 0; }
+.install { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; max-width: 70ch; }
+.install li { display: grid; grid-template-columns: 34px 1fr; gap: 14px; align-items: start; }
+.install .n { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--accent); color: var(--accent); display: grid; place-items: center; font: 600 15px/1 var(--mono); }
+.install .t { padding-top: 4px; min-width: 0; }
+.warn { margin-top: 22px; padding: 16px 18px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line); color: var(--muted); font-size: 15px; max-width: 70ch; }
+footer { border-top: 1px solid var(--line); padding-top: 24px; color: var(--muted); font-size: 14px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; }
+
+@media (max-width: 820px) {
+  .hero { grid-template-columns: 1fr; gap: 36px; }
+  .steps { grid-template-columns: 1fr; }
+  .feats { grid-template-columns: 1fr; }
+  body { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .wave i { animation: none; height: 55%; } .btn { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="bar">
+    <span class="brand">SayDo</span>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="fr" aria-pressed="false">FR</button>
+      <button type="button" data-lang="ar" aria-pressed="false">العربية</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div>
+        <p class="eyebrow" data-t="eyebrow">Voice assistant for your day</p>
+        <h1 data-t="h1">Say it. <em>SayDo</em> does it.</h1>
+        <p class="lead" data-t="lead">Speak an appointment, a task or an email. SayDo shows you what it understood, and saves it only after you confirm.</p>
+        <div class="cta">
+          <a class="btn" id="dl" href="#" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 20h16"/></svg>
+            <span data-t="download">Download for Android</span>
+          </a>
+          <span class="meta">v1.0 · APK · 56.5 MB</span>
+        </div>
+        <p class="note" data-t="android">Android only for now. iPhone version is not available yet.</p>
+      </div>
+
+      <div class="phone" aria-hidden="true">
+        <div class="wavebox">
+          <div class="mic"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2z"/></svg></div>
+          <div class="wave" id="wave"></div>
+        </div>
+        <p class="said" data-t="said">“Meeting with Sophie tomorrow at 2 PM”</p>
+        <div class="card">
+          <span class="tag" data-t="cardTag">New event</span>
+          <h3 data-t="cardTitle">Meeting with Sophie</h3>
+          <div class="row">
+            <span class="chip" data-t="cardDate">Tomorrow</span>
+            <span class="chip">14:00</span>
+            <span class="chip">Sophie</span>
+          </div>
+          <div class="actions"><span data-t="cancel">Cancel</span><span class="go" data-t="confirm">Confirm</span></div>
+        </div>
+      </div>
+    </div>
+
+    <section>
+      <h2 data-t="howTitle">From your voice to your calendar in three steps</h2>
+      <ol class="steps">
+        <li><b data-t="s1t">Speak</b><span data-t="s1d">Tap the mic and talk the way you normally would. French, English or Arabic.</span></li>
+        <li><b data-t="s2t">Check</b><span data-t="s2d">SayDo shows the title, date, time and people it understood. Fix anything before saving.</span></li>
+        <li><b data-t="s3t">Confirm</b><span data-t="s3d">Events reach Google Calendar. Tasks and emails land in their own lists.</span></li>
+      </ol>
+    </section>
+
+    <section>
+      <h2 data-t="featTitle">What it can create</h2>
+      <div class="feats">
+        <div class="feat"><b data-t="f1t">Events</b><span data-t="f1d">Appointments with date, time and people, synced to your Google Calendar.</span></div>
+        <div class="feat"><b data-t="f2t">Tasks</b><span data-t="f2d">To-dos with an optional due date and notes. Tick them off when done.</span></div>
+        <div class="feat"><b data-t="f3t">Emails</b><span data-t="f3d">Say who and what. You review the message, then approve it before it is sent.</span></div>
+        <div class="feat"><b data-t="f4t">Contacts</b><span data-t="f4d">Addresses are remembered, so next time “email Sarah” takes one tap.</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2 data-t="instTitle">Install in under a minute</h2>
+      <ol class="install">
+        <li><span class="n">1</span><span class="t" data-t="i1">Open this page on your Android phone and tap <b>Download for Android</b>. If the browser warns about the file, choose <b>Download anyway</b>.</span></li>
+        <li><span class="n">2</span><span class="t" data-t="i2">Open the downloaded file. If Android asks, allow installs from your browser (<b>Allow from this source</b>), go back and tap <b>Install</b>.</span></li>
+        <li><span class="n">3</span><span class="t" data-t="i3">If Play Protect says the app is not verified, tap <b>More details</b>, then <b>Install anyway</b>. This appears because SayDo is not on the Play Store yet.</span></li>
+      </ol>
+      <p class="warn" data-t="cold">The first voice request can take up to a minute while the server wakes up. After that it answers in seconds.</p>
+    </section>
+  </main>
+
+  <footer>
+    <span data-t="foot">SayDo v1.0 · built by <a href="https://github.com/lilyKhad" rel="noopener">lilyKhad</a>, <a href="https://github.com/hyb0hb" rel="noopener">hyb0hb</a> and <a href="https://github.com/Lydia-Mokrani" rel="noopener">Lydia-Mokrani</a></span>
+    <a id="repo" href="#" rel="noopener" data-t="src">Release notes and source on GitHub</a>
+  </footer>
+</div>
+
+<script>
+/* ── Set this to your GitHub repo, e.g. "lilyKhad/saydo". Everything else follows. ── */
+var REPO = "SayDO14/saydo";
+
+var T = {
+  en: {
+    eyebrow: "Voice assistant for your day", h1: "Say it. <em>SayDo</em> does it.",
+    lead: "Speak an appointment, a task or an email. SayDo shows you what it understood, and saves it only after you confirm.",
+    download: "Download for Android", android: "Android only for now. An iPhone version is not available yet.",
+    said: "“Meeting with Sophie tomorrow at 2 PM”", cardTag: "New event", cardTitle: "Meeting with Sophie", cardDate: "Tomorrow", cancel: "Cancel", confirm: "Confirm",
+    howTitle: "From your voice to your calendar in three steps",
+    s1t: "Speak", s1d: "Tap the mic and talk the way you normally would. French, English or Arabic.",
+    s2t: "Check", s2d: "SayDo shows the title, date, time and people it understood. Fix anything before saving.",
+    s3t: "Confirm", s3d: "Events reach Google Calendar. Tasks and emails land in their own lists.",
+    featTitle: "What it can create",
+    f1t: "Events", f1d: "Appointments with date, time and people, synced to your Google Calendar.",
+    f2t: "Tasks", f2d: "To-dos with an optional due date and notes. Tick them off when done.",
+    f3t: "Emails", f3d: "Say who and what. You review the message, then approve it before it is sent.",
+    f4t: "Contacts", f4d: "Addresses are remembered, so next time “email Sarah” takes one tap.",
+    instTitle: "Install in under a minute",
+    i1: "Open this page on your Android phone and tap <b>Download for Android</b>. If the browser warns about the file, choose <b>Download anyway</b>.",
+    i2: "Open the downloaded file. If Android asks, allow installs from your browser (<b>Allow from this source</b>), go back and tap <b>Install</b>.",
+    i3: "If Play Protect says the app is not verified, tap <b>More details</b>, then <b>Install anyway</b>. This appears because SayDo is not on the Play Store yet.",
+    cold: "The first voice request can take up to a minute while the server wakes up. After that it answers in seconds.",
+    foot: "SayDo v1.0 · built by <a href=\"https://github.com/lilyKhad\" rel=\"noopener\">lilyKhad</a>, <a href=\"https://github.com/hyb0hb\" rel=\"noopener\">hyb0hb</a> and <a href=\"https://github.com/Lydia-Mokrani\" rel=\"noopener\">Lydia-Mokrani</a>", src: "Release notes and source on GitHub"
+  },
+  fr: {
+    eyebrow: "L'assistant vocal de votre journée", h1: "Dites-le. <em>SayDo</em> s'en charge.",
+    lead: "Dictez un rendez-vous, une tâche ou un email. SayDo vous montre ce qu'il a compris et n'enregistre qu'après votre confirmation.",
+    download: "Télécharger pour Android", android: "Android uniquement pour le moment. Pas encore de version iPhone.",
+    said: "« Rendez-vous avec Sophie demain à 14h »", cardTag: "Nouvel événement", cardTitle: "Rendez-vous avec Sophie", cardDate: "Demain", cancel: "Annuler", confirm: "Confirmer",
+    howTitle: "De votre voix à votre agenda en trois étapes",
+    s1t: "Parlez", s1d: "Appuyez sur le micro et parlez naturellement. Français, anglais ou arabe.",
+    s2t: "Vérifiez", s2d: "SayDo affiche le titre, la date, l'heure et les personnes comprises. Corrigez avant d'enregistrer.",
+    s3t: "Confirmez", s3d: "Les événements arrivent dans Google Agenda. Tâches et emails vont dans leurs listes.",
+    featTitle: "Ce que SayDo peut créer",
+    f1t: "Événements", f1d: "Rendez-vous avec date, heure et personnes, synchronisés avec Google Agenda.",
+    f2t: "Tâches", f2d: "Des to-dos avec échéance facultative et notes. Cochez-les une fois faites.",
+    f3t: "Emails", f3d: "Dites à qui et quoi. Vous relisez le message, puis vous l'approuvez avant l'envoi.",
+    f4t: "Contacts", f4d: "Les adresses sont mémorisées : la prochaine fois, « écris à Sarah » prend un geste.",
+    instTitle: "Installation en moins d'une minute",
+    i1: "Ouvrez cette page sur votre téléphone Android et touchez <b>Télécharger pour Android</b>. Si le navigateur avertit, choisissez <b>Télécharger quand même</b>.",
+    i2: "Ouvrez le fichier téléchargé. Si Android le demande, autorisez les installations depuis votre navigateur (<b>Autoriser depuis cette source</b>), revenez et touchez <b>Installer</b>.",
+    i3: "Si Play Protect indique que l'application n'est pas vérifiée, touchez <b>Plus de détails</b>, puis <b>Installer quand même</b>. Cela s'affiche car SayDo n'est pas encore sur le Play Store.",
+    cold: "La première requête vocale peut prendre jusqu'à une minute, le temps que le serveur se réveille. Ensuite, la réponse arrive en quelques secondes.",
+    foot: "SayDo v1.0 · réalisé par <a href=\"https://github.com/lilyKhad\" rel=\"noopener\">lilyKhad</a>, <a href=\"https://github.com/hyb0hb\" rel=\"noopener\">hyb0hb</a> et <a href=\"https://github.com/Lydia-Mokrani\" rel=\"noopener\">Lydia-Mokrani</a>", src: "Notes de version et code source sur GitHub"
+  },
+  ar: {
+    eyebrow: "مساعدك الصوتي ليومك", h1: "قُلها. <em>SayDo</em> ينفّذها.",
+    lead: "انطق موعدًا أو مهمة أو بريدًا إلكترونيًا. يعرض لك SayDo ما فهمه ولا يحفظ شيئًا إلا بعد تأكيدك.",
+    download: "حمّل لأندرويد", android: "متوفر لأندرويد فقط حاليًا. لا توجد نسخة لآيفون بعد.",
+    said: "«موعد مع صوفي غدًا الساعة 2 ظهرًا»", cardTag: "حدث جديد", cardTitle: "موعد مع صوفي", cardDate: "غدًا", cancel: "إلغاء", confirm: "تأكيد",
+    howTitle: "من صوتك إلى تقويمك في ثلاث خطوات",
+    s1t: "تحدّث", s1d: "اضغط على الميكروفون وتكلّم بشكل طبيعي. بالعربية أو الفرنسية أو الإنجليزية.",
+    s2t: "راجع", s2d: "يعرض SayDo العنوان والتاريخ والوقت والأشخاص الذين فهمهم. عدّل ما تريد قبل الحفظ.",
+    s3t: "أكّد", s3d: "تصل الأحداث إلى تقويم Google. وتذهب المهام والرسائل إلى قوائمها.",
+    featTitle: "ما يمكنه إنشاؤه",
+    f1t: "الأحداث", f1d: "مواعيد بتاريخ ووقت وأشخاص، تتزامن مع تقويم Google.",
+    f2t: "المهام", f2d: "مهام بموعد اختياري وملاحظات. ضع علامة عليها عند الانتهاء.",
+    f3t: "البريد", f3d: "قل لمن وماذا. تراجع الرسالة ثم توافق عليها قبل الإرسال.",
+    f4t: "جهات الاتصال", f4d: "تُحفظ العناوين، فتصبح كتابة «راسل سارة» بنقرة واحدة في المرة القادمة.",
+    instTitle: "التثبيت في أقل من دقيقة",
+    i1: "افتح هذه الصفحة على هاتف أندرويد واضغط <b>حمّل لأندرويد</b>. إذا حذّر المتصفح من الملف فاختر <b>تنزيل على أي حال</b>.",
+    i2: "افتح الملف الذي نزّلته. إذا طلب أندرويد ذلك فاسمح بالتثبيت من المتصفح (<b>السماح من هذا المصدر</b>) ثم ارجع واضغط <b>تثبيت</b>.",
+    i3: "إذا قال Play Protect إن التطبيق غير موثّق فاضغط <b>مزيد من التفاصيل</b> ثم <b>التثبيت على أي حال</b>. يظهر هذا لأن SayDo ليس على متجر Play بعد.",
+    cold: "قد يستغرق أول طلب صوتي حتى دقيقة بينما يستيقظ الخادم. بعد ذلك يجيب خلال ثوانٍ.",
+    foot: "SayDo v1.0 · من تطوير <a href=\"https://github.com/lilyKhad\" rel=\"noopener\">lilyKhad</a> و<a href=\"https://github.com/hyb0hb\" rel=\"noopener\">hyb0hb</a> و<a href=\"https://github.com/Lydia-Mokrani\" rel=\"noopener\">Lydia-Mokrani</a>", src: "ملاحظات الإصدار والشيفرة على GitHub"
+  }
+};
+
+var wave = document.getElementById("wave");
+for (var i = 0; i < 28; i++) wave.appendChild(document.createElement("i"));
+
+var ready = REPO.indexOf("YOUR-REPO-NAME") === -1;
+var base = "https://github.com/" + REPO;
+document.getElementById("dl").href = ready ? base + "/releases/latest/download/app-release.apk" : "#";
+document.getElementById("repo").href = ready ? base + "/releases/latest" : "#";
+
+function setLang(code) {
+  var d = T[code] || T.en;
+  document.documentElement.lang = code;
+  document.documentElement.dir = code === "ar" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-t]").forEach(function (el) {
+    var v = d[el.getAttribute("data-t")];
+    if (v !== undefined) el.innerHTML = v;
+  });
+  document.querySelectorAll(".lang button").forEach(function (b) {
+    b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === code));
+  });
+  try { localStorage.setItem("saydo-lang", code); } catch (e) {}
+}
+document.querySelectorAll(".lang button").forEach(function (b) {
+  b.addEventListener("click", function () { setLang(b.getAttribute("data-lang")); });
+});
+
+var start = "en";
+try { start = localStorage.getItem("saydo-lang") || ""; } catch (e) {}
+if (!T[start]) {
+  var nav = (navigator.language || "en").slice(0, 2).toLowerCase();
+  start = T[nav] ? nav : "en";
+}
+setLang(start);
+</script>
+
+</body>
+</html>
