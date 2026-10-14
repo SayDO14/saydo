@@ -262,6 +262,7 @@ class _EventsListState extends State<_EventsList> {
   void _openAllEventsSheet(List<EventItem> all) {
     showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (_) => Container(
@@ -295,7 +296,8 @@ class _EventsListState extends State<_EventsList> {
                   ),
                   const Spacer(),
                   IconButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () =>
+                        Navigator.of(context, rootNavigator: true).pop(),
                     icon: const Icon(Icons.close_rounded, color: _textSecondary),
                   ),
                 ],
@@ -581,6 +583,7 @@ class _EventCard extends StatelessWidget {
   void _showDetails(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (_) => _EventDetailSheet(event: event),
@@ -615,7 +618,11 @@ class _EventDetailSheet extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
+          Flexible(
+ child: SingleChildScrollView(
+ child: SafeArea(
+ top: false,
+ child: Padding(
             padding: EdgeInsets.fromLTRB(
                 20, 0, 20, MediaQuery.of(context).viewInsets.bottom + 24),
             child: Column(
@@ -654,6 +661,9 @@ class _EventDetailSheet extends StatelessWidget {
               ],
             ),
           ),
+ ),
+ ),
+ ),
         ],
       ),
     );

@@ -262,6 +262,7 @@ class _EmailsScreenState extends ConsumerState<EmailsScreen> {
   void _showEmailDetails(BuildContext context, EmailItem email) {
     showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (_) => Container(
@@ -287,7 +288,11 @@ class _EmailsScreenState extends ConsumerState<EmailsScreen> {
                 ),
               ),
             ),
-            Padding(
+            Flexible(
+ child: SingleChildScrollView(
+ child: SafeArea(
+ top: false,
+ child: Padding(
               padding: EdgeInsets.fromLTRB(
                 20,
                 0,
@@ -384,6 +389,9 @@ class _EmailsScreenState extends ConsumerState<EmailsScreen> {
                 ],
               ),
             ),
+ ),
+ ),
+ ),
           ],
         ),
       ),

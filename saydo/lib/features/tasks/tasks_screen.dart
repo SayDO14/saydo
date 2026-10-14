@@ -682,6 +682,7 @@ class _TaskCard extends StatelessWidget {
   void _showMenu(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       builder: (_) => Container(
         margin: const EdgeInsets.all(16),
@@ -709,7 +710,7 @@ class _TaskCard extends StatelessWidget {
                 style: const TextStyle(color: _textPrimary),
               ),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.of(context, rootNavigator: true).pop();
                 onToggle(!task.isDone);
               },
             ),
@@ -719,7 +720,7 @@ class _TaskCard extends StatelessWidget {
               title: Text(AppLocalizations.of(context)!.delete,
                   style: TextStyle(color: Colors.redAccent)),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.of(context, rootNavigator: true).pop();
                 onDelete();
               },
             ),

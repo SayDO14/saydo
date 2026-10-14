@@ -8,6 +8,19 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 String friendlyAuthError(AppLocalizations l, Object error) {
   final text = error.toString().toLowerCase();
 
+  // Server-side failure (e.g. a database trigger failing while creating the
+  // user): Supabase may wrap it as a "retryable" error, but it is NOT a
+  // connection problem, so don't tell the user to check their internet.
+  if (error is AuthException) {
+    final m = error.message.toLowerCase();
+    final code = error.statusCode ?? '';
+    if (code.startsWith('5') ||
+        m.contains('database error') ||
+        m.contains('unexpected_failure')) {
+      return l.authErrUnknown;
+    }
+  }
+
   // Network problems (Supabase wraps them in a "retryable fetch" exception).
   if (error is TimeoutException ||
       error.runtimeType.toString().contains('RetryableFetch') ||
