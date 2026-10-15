@@ -185,12 +185,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _handleGoogleSignIn() =>
       _handleSocial(ref.read(authRepositoryProvider).signInWithGoogle);
 
-  Future<void> _handleAppleSignIn() =>
-      _handleSocial(ref.read(authRepositoryProvider).signInWithApple);
-
-  Future<void> _handleFacebookSignIn() =>
-      _handleSocial(ref.read(authRepositoryProvider).signInWithFacebook);
-
   Future<void> _showForgotPasswordDialog() async {
     final l = AppLocalizations.of(context)!;
     final controller = TextEditingController(text: _emailController.text.trim());
@@ -555,10 +549,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                   const SizedBox(height: 18),
 
-                  // 3 Social squircle buttons with pure WHITE icons:
-                  // 1) Pure white "G" in squircle
-                  // 2) Pure white "" Apple
-                  // 3) Pure white "f" Facebook
+                  // Google sign-in button (squircle, pure white "G")
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -570,24 +561,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             color: Colors.white,
                             fontSize: 21,
                             fontWeight: FontWeight.w800,
-                            fontFamily: 'sans-serif',
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      _buildGlassSquircleButton(
-                        onTap: _handleAppleSignIn,
-                        child: const Icon(Icons.apple, color: Colors.white, size: 26),
-                      ),
-                      const SizedBox(width: 16),
-                      _buildGlassSquircleButton(
-                        onTap: _handleFacebookSignIn,
-                        child: const Text(
-                          'f',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 23,
-                            fontWeight: FontWeight.bold,
                             fontFamily: 'sans-serif',
                           ),
                         ),
