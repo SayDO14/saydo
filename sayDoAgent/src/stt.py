@@ -64,11 +64,11 @@ def parse_audio(path: str, current_datetime: str = "", timezone: str = "Africa/A
     if current_datetime:
         prompt += f"\n\nCurrent date/time: {current_datetime} ({timezone})"
 
-    last_error = None
-    for model_name in MODELS:
-        for attempt in range(2):
+        last_error = None
+    for round_num in range(3):  # go through the whole model list up to 3 times
+        for model_name in MODELS:
             try:
-                print(f"[single-shot] Calling model {model_name} (attempt {attempt+1})...")
+                print(f"[single-shot] Round {round_num+1} - calling {model_name}...")
                 response = client.models.generate_content(
                     model=model_name,
                     contents=[
@@ -85,17 +85,17 @@ def parse_audio(path: str, current_datetime: str = "", timezone: str = "Africa/A
             except Exception as e:
                 last_error = e
                 err = str(e)
-                if "503" in err or "overload" in err.lower() or "429" in err:
-                    print(f"[{model_name}] Overloaded/rate limited: {err}. Trying next...")
-                    time.sleep(0.5)
-                    break
-                elif attempt < 1:
-                    time.sleep(1)
-                    continue
-                break
+                print(f"[{model_name}] failed: {err[:150]}")
+                time.sleep(0.5)
+                continue  # try the next model
+
+        # All models failed this round: wait before starting the next round
+        if round_num < 2:
+            wait = 2 * (round_num + 1)  # 2s, then 4s
+            print(f"[single-shot] All models failed, retrying in {wait}s...")
+            time.sleep(wait)
 
     raise last_error
-
 
 def transcribe(path: str) -> str:
     """Fallback: transcription only."""
