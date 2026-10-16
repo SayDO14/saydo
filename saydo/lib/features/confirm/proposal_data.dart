@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../voice/parse_result.dart';
 
-/// The values the user can edit before confirming.
+/// Editable copy of what the voice agent proposed. The confirmation sheet
+/// edits this, and [SaveService.confirm] writes it to the database.
 class ProposalData {
-  ProposalData({
+  const ProposalData({
     required this.type,
     this.title = '',
     this.date,
@@ -17,61 +18,81 @@ class ProposalData {
   });
 
   final String type; // event | task | email
-  String title;
-  DateTime? date;
-  TimeOfDay? time;
-  List<String> people;
-  String toName;
-  String toEmail;
-  String subject;
-  String body;
+  final String title;
+  final DateTime? date; // calendar day only
+  final TimeOfDay? time;
+  final List<String> people;
+  final String toName;
+  final String toEmail;
+  final String subject;
+  final String body;
 
-  factory ProposalData.fromResult(ParseResult r) {
-    final d = r.date == null ? null : DateTime.tryParse(r.date!);
-    TimeOfDay? t;
-    final parts = r.time?.split(':');
-    if (parts != null && parts.length >= 2) {
-      final h = int.tryParse(parts[0]);
-      final m = int.tryParse(parts[1]);
-      if (h != null && m != null) t = TimeOfDay(hour: h, minute: m);
-    }
-    return ProposalData(
-      type: r.type ?? 'task',
-      title: r.title ?? '',
-      date: d == null ? null : DateTime(d.year, d.month, d.day),
-      time: t,
-      people: r.people,
-      toName: r.toName ?? '',
-      subject: r.subject ?? '',
-      body: r.body ?? '',
-    );
-  }
+  factory ProposalData.fromResult(ParseResult r) => ProposalData(
+        type: r.type ?? 'task',
+        title: r.title ?? '',
+        date: _parseDate(r.date),
+        time: _parseTime(r.time),
+        people: List<String>.from(r.people),
+        toName: r.toName ?? '',
+        subject: r.subject ?? '',
+        body: r.body ?? '',
+      );
 
-  /// Without toEmail: the agent never provides it, so it must not count as an edit.
+  ProposalData copyWith({
+    String? title,
+    DateTime? date,
+    bool clearDate = false,
+    TimeOfDay? time,
+    bool clearTime = false,
+    List<String>? people,
+    String? toName,
+    String? toEmail,
+    String? subject,
+    String? body,
+  }) =>
+      ProposalData(
+        type: type,
+        title: title ?? this.title,
+        date: clearDate ? null : (date ?? this.date),
+        time: clearTime ? null : (time ?? this.time),
+        people: people ?? this.people,
+        toName: toName ?? this.toName,
+        toEmail: toEmail ?? this.toEmail,
+        subject: subject ?? this.subject,
+        body: body ?? this.body,
+      );
+
+  /// Used to detect whether the user edited the proposal.
+  /// [toEmail] is left out on purpose: the agent never proposes one, so
+  /// typing it must not count as an edit (SaveService stores it separately).
   Map<String, dynamic> toJson() => {
         'type': type,
         'title': title.trim(),
-        'date': date == null ? null : formatDate(date!),
-        'time': time == null ? null : formatTime(time!),
+        'date': date == null ? null : _fmtDate(date!),
+        'time': time == null ? null : _fmtTime(time!),
         'people': people,
         'to_name': toName.trim(),
         'subject': subject.trim(),
         'body': body.trim(),
       };
-}
 
-String formatDate(DateTime d) =>
-    '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+  static DateTime? _parseDate(String? s) {
+    if (s == null || s.isEmpty) return null;
+    final d = DateTime.tryParse(s);
+    return d == null ? null : DateTime(d.year, d.month, d.day);
+  }
 
-String formatTime(TimeOfDay t) =>
-    '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+  static TimeOfDay? _parseTime(String? s) {
+    if (s == null || s.isEmpty) return null;
+    final m = RegExp(r'^(\d{1,2}):(\d{2})').firstMatch(s);
+    if (m == null) return null;
+    final h = int.parse(m.group(1)!);
+    final min = int.parse(m.group(2)!);
+    if (h > 23 || min > 59) return null;
+    return TimeOfDay(hour: h, minute: min);
+  }
 
-/// ISO 8601 with the local UTC offset, so Postgres keeps the wall-clock time
-/// the user meant (a plain local toIso8601String has no offset).
-String isoWithOffset(DateTime local) {
-  final off = local.timeZoneOffset;
-  final sign = off.isNegative ? '-' : '+';
-  final h = off.inHours.abs().toString().padLeft(2, '0');
-  final m = (off.inMinutes.abs() % 60).toString().padLeft(2, '0');
-  return '${local.toIso8601String()}$sign$h:$m';
+  static String _two(int n) => n.toString().padLeft(2, '0');
+  static String _fmtDate(DateTime d) => '${d.year}-${_two(d.month)}-${_two(d.day)}';
+  static String _fmtTime(TimeOfDay t) => '${_two(t.hour)}:${_two(t.minute)}';
 }

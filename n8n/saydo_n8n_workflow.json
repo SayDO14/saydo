@@ -256,27 +256,26 @@
       ]
     },
     {
-      "parameters": {
-        "resource": "message",
-        "operation": "send",
-        "sendTo": "={{ $json.body.record.to_email }}",
-        "subject": "={{ $json.body.record.subject }}",
-        "emailType": "text",
-        "message": "={{ $json.body.record.body }}",
-        "options": {
-          "appendAttribution": false
-        }
-      },
-      "id": "n9",
-      "name": "Send Gmail",
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
-      "position": [
-        460,
-        540
-      ],
-      "onError": "continueErrorOutput"
-    },
+  "parameters": {
+    "resource": "message",
+    "operation": "send",
+    "sendTo": "={{ $json.body.record.to_email }}",
+    "subject": "={{ $json.body.record.subject }}",
+    "emailType": "text",
+    "message": "={{ $json.body.record.body }}\n\n—\nSent by {{ $json.body.record.sender_name || 'a SayDo user' }}{{ $json.body.record.sender_email ? ' (' + $json.body.record.sender_email + ')' : '' }} via SayDo",
+    "options": {
+      "appendAttribution": false,
+      "senderName": "={{ ($json.body.record.sender_name || 'SayDo') + ' via SayDo' }}",
+      "replyTo": "={{ $json.body.record.sender_email || '' }}"
+    }
+  },
+  "id": "n9",
+  "name": "Send Gmail",
+  "type": "n8n-nodes-base.gmail",
+  "typeVersion": 2.1,
+  "position": [460, 540],
+  "onError": "continueErrorOutput"
+},
     {
       "parameters": {
         "operation": "update",

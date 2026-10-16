@@ -59,3 +59,15 @@ String formatClock(DateTime time) {
 
 /// Short month name in the app language.
 String monthShort(DateTime date) => _months[_lang]![date.month - 1];
+
+/// ISO-8601 with the UTC offset, e.g. "2026-10-16T14:30:00+01:00".
+/// (DateTime.toIso8601String() drops the offset for local times.)
+String isoWithOffset(DateTime d) {
+  String two(int n) => n.toString().padLeft(2, '0');
+  final offset = d.timeZoneOffset;
+  final sign = offset.isNegative ? '-' : '+';
+  final abs = offset.abs();
+  return '${d.year.toString().padLeft(4, '0')}-${two(d.month)}-${two(d.day)}'
+      'T${two(d.hour)}:${two(d.minute)}:${two(d.second)}'
+      '$sign${two(abs.inHours)}:${two(abs.inMinutes.remainder(60))}';
+}

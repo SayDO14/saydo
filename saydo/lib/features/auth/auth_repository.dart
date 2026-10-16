@@ -21,58 +21,5 @@ class AuthRepository {
     );
   }
 
-  /// Opens the browser for Apple sign-in.
-  Future<void> signInWithApple() async {
-    await _client.auth.signInWithOAuth(
-      OAuthProvider.apple,
-      redirectTo: AppConfig.authRedirect,
-      authScreenLaunchMode: LaunchMode.externalApplication,
-    );
-  }
-
-  /// Opens the browser for Facebook sign-in.
-  Future<void> signInWithFacebook() async {
-    await _client.auth.signInWithOAuth(
-      OAuthProvider.facebook,
-      redirectTo: AppConfig.authRedirect,
-      authScreenLaunchMode: LaunchMode.externalApplication,
-    );
-  }
-
-  /// Sign in with email and password.
-  Future<AuthResponse> signInWithPassword({
-    required String email,
-    required String password,
-  }) async {
-    return await _client.auth.signInWithPassword(
-      email: email,
-      password: password,
-    );
-  }
-
-  /// Sign up with email, password and optional display name.
-  Future<AuthResponse> signUp({
-    required String email,
-    required String password,
-    String? fullName,
-  }) async {
-    return await _client.auth.signUp(
-      email: email,
-      password: password,
-      data: fullName != null && fullName.isNotEmpty ? {'full_name': fullName} : null,
-    );
-  }
-
-  /// Sends a password-reset email. The link opens the app through the same
-  /// deep link as OAuth; the user is then signed in and can set a new
-  /// password from Settings > Security.
-  Future<void> resetPassword(String email) {
-    return _client.auth.resetPasswordForEmail(
-      email,
-      redirectTo: AppConfig.authRedirect,
-    );
-  }
-
   Future<void> signOut() => _client.auth.signOut();
 }
-

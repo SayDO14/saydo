@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/app_settings.dart';
+import '../../core/date_format.dart';
 import '../voice/parse_result.dart';
 import 'proposal_data.dart';
 
@@ -18,6 +19,19 @@ class SaveService {
   final String Function() _timezone;
 
   String get _uid => _db.auth.currentUser!.id;
+
+  /// Signed-in user's address (from the Google login).
+  String get _senderEmail => _db.auth.currentUser!.email ?? '';
+
+  /// Signed-in user's display name (Google full name, else the email prefix).
+  String get _senderName {
+    final user = _db.auth.currentUser!;
+    final meta = user.userMetadata ?? {};
+    final name = (meta['full_name'] ?? meta['name'] ?? '').toString().trim();
+    if (name.isNotEmpty) return name;
+    final email = user.email ?? '';
+    return email.contains('@') ? email.split('@').first : email;
+  }
 
   /// Email address of a saved contact, matched by spoken name (case-insensitive).
   Future<String?> findContactEmail(String name) async {
@@ -124,16 +138,20 @@ class SaveService {
   }
 
   Future<void> _insertEmail(ProposalData d, String transcript, String captureId) async {
+    // 'approved' -> the n8n workflow picks the row up and sends the email.
     await _db.from('emails').insert({
       'user_id': _uid,
       'to_name': d.toName.trim().isEmpty ? null : d.toName.trim(),
       'to_email': d.toEmail.trim(),
       'subject': d.subject.trim(),
       'body': d.body.trim(),
-      'status': 'approved', // approved by the user; n8n sends it
+      'sender_name': _senderName,
+      'sender_email': _senderEmail,
+      'status': 'approved',
       'source_transcript': transcript,
       'capture_id': captureId,
     });
+
     // Remember the address so next time "email Sarah" is one tap.
     if (d.toName.trim().isNotEmpty) {
       try {

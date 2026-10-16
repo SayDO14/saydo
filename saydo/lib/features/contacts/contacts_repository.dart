@@ -54,6 +54,11 @@ class ContactsRepository {
   }
 
   Future<void> delete(String id) async {
-    await _db.from('contacts').delete().eq('id', id);
+    final deleted =
+        await _db.from('contacts').delete().eq('id', id).select('id');
+    // RLS blocks silently: no error, but zero rows deleted.
+    if (deleted.isEmpty) {
+      throw Exception('Contact not deleted (check the delete policy in Supabase)');
+    }
   }
 }
