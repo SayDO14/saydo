@@ -19,6 +19,8 @@ dependencies:
   path_provider: ^2.1.5
   http: ^1.2.2
   shared_preferences: ^2.3.0
+  googleapis_auth: ^1.4.0
+  googleapis: ^13.2.0
 
 dev_dependencies:
   flutter_test:

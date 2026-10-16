@@ -18,6 +18,7 @@ class AuthRepository {
       OAuthProvider.google,
       redirectTo: AppConfig.authRedirect,
       authScreenLaunchMode: LaunchMode.externalApplication,
+      scopes: 'openid email profile https://www.googleapis.com/auth/calendar',
     );
   }
 

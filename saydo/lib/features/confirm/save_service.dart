@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/app_settings.dart';
 import '../../core/date_format.dart';
+import '../calendar/google_calendar_service.dart';
 import '../voice/parse_result.dart';
 import 'proposal_data.dart';
 
@@ -110,9 +111,13 @@ class SaveService {
     } catch (_) {}
   }
 
-  Future<void> _insertEvent(ProposalData d, String transcript, String captureId) {
+  GoogleCalendarService _calendarService() => GoogleCalendarService(_db);
+
+  Future<void> _insertEvent(ProposalData d, String transcript, String captureId) async {
     final start = DateTime(d.date!.year, d.date!.month, d.date!.day, d.time!.hour, d.time!.minute);
-    return _db.from('events').insert({
+    final end = start.add(const Duration(hours: 1));
+
+    final insertResult = await _db.from('events').insert({
       'user_id': _uid,
       'title': d.title.trim(),
       'start_at': isoWithOffset(start),
@@ -120,7 +125,32 @@ class SaveService {
       'related_people': d.people,
       'source_transcript': transcript,
       'capture_id': captureId,
-    });
+    }).select('id').single();
+
+    final eventId = insertResult['id'] as String;
+
+    // Sync to user's Google Calendar
+    try {
+      final calendarService = _calendarService();
+      final description = d.people.isNotEmpty ? 'With: ${d.people.join(', ')}' : null;
+      final googleEventId = await calendarService.createEvent(
+        title: d.title.trim(),
+        start: start,
+        end: end,
+        description: description,
+        people: d.people,
+      );
+
+      if (googleEventId != null) {
+        await _db.from('events').update({
+          'google_event_id': googleEventId,
+          'synced_at': DateTime.now().toIso8601String(),
+        }).eq('id', eventId);
+      }
+    } catch (e) {
+      debugPrint('[SaveService] Google Calendar sync failed: $e');
+      // Don't block the save — Supabase already has the event
+    }
   }
 
   Future<void> _insertTask(ProposalData d, String transcript, String captureId) {
