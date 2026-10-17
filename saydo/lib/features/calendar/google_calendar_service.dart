@@ -4,41 +4,17 @@ import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'google_token_store.dart';
+
 /// Creates events in the user's own Google Calendar.
 class GoogleCalendarService {
   GoogleCalendarService(this._client);
+  // ignore: unused_field
   final SupabaseClient _client;
 
-  AuthClient? _authClient;
-
-  /// Get the user's Google OAuth token from Supabase.
-  Future<AuthClient?> _getAuthClient() async {
-    if (_authClient != null) {
-      return _authClient!;
-    }
-
-    final session = _client.auth.currentSession;
-    if (session == null) return null;
-
-    final accessToken = session.accessToken;
-    if (accessToken == null) return null;
-
-    final credentials = AccessCredentials(
-      AccessToken(
-        'Bearer',
-        accessToken,
-        DateTime.now().add(const Duration(hours: 1)),
-      ),
-      session.refreshToken,
-      [CalendarApi.calendarScope],
-    );
-
-    _authClient = authenticatedClient(http.Client(), credentials);
-    return _authClient;
-  }
-
-  /// Create an event in the user's Google Calendar.
-  /// Returns the Google Calendar event ID if successful.
+  /// Creates the event in the signed-in user's primary calendar.
+  /// Returns the Google event id, or null if it couldn't be synced
+  /// (no/expired Google token, scope not granted, network...).
   Future<String?> createEvent({
     required String title,
     required DateTime start,
@@ -46,37 +22,42 @@ class GoogleCalendarService {
     String? description,
     List<String> people = const [],
   }) async {
+    http.Client? base;
     try {
-      final authClient = await _getAuthClient();
-      if (authClient == null) {
-        debugPrint('[GoogleCalendar] No auth client — user not signed in with Google');
+      // IMPORTANT: this must be the *Google* token, not Supabase's JWT
+      // (session.accessToken) — Google rejects the latter with 401.
+      final saved = await GoogleTokenStore.read();
+      if (saved == null) {
+        debugPrint('[GoogleCalendar] No valid Google token — user must sign in again');
         return null;
       }
 
-      final calendar = CalendarApi(authClient);
+      base = http.Client();
+      final authClient = authenticatedClient(
+        base,
+        AccessCredentials(
+          AccessToken('Bearer', saved.token, saved.expiry.toUtc()),
+          null,
+          [CalendarApi.calendarEventsScope],
+        ),
+      );
 
+      // Attendees are NOT added: Google requires a real email for each one
+      // and rejects the whole event otherwise. Names go in the description.
       final event = Event()
         ..summary = title
-        ..description = description ?? '';
+        ..description = description ?? ''
+        ..start = (EventDateTime()..dateTime = start.toUtc())
+        ..end = (EventDateTime()..dateTime = end.toUtc());
 
-      final startDateTime = EventDateTime()..dateTime = start;
-      final endDateTime = EventDateTime()..dateTime = end;
-
-      event.start = startDateTime;
-      event.end = endDateTime;
-
-      if (people.isNotEmpty) {
-        event.attendees = people
-            .map((name) => EventAttendee()..displayName = name)
-            .toList();
-      }
-
-      final created = await calendar.events.insert(event, 'primary');
+      final created = await CalendarApi(authClient).events.insert(event, 'primary');
       debugPrint('[GoogleCalendar] Created event: ${created.id}');
       return created.id;
     } catch (e) {
       debugPrint('[GoogleCalendar] Failed to create event: $e');
       return null;
+    } finally {
+      base?.close();
     }
   }
 }

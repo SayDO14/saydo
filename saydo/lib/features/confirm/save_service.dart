@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/app_settings.dart';
 import '../../core/date_format.dart';
 import '../calendar/google_calendar_service.dart';
+import '../calendar/google_tasks_service.dart';
 import '../voice/parse_result.dart';
 import 'proposal_data.dart';
 
@@ -144,7 +145,7 @@ class SaveService {
       if (googleEventId != null) {
         await _db.from('events').update({
           'google_event_id': googleEventId,
-          'synced_at': DateTime.now().toIso8601String(),
+          'synced_at': DateTime.now().toUtc().toIso8601String(),
         }).eq('id', eventId);
       }
     } catch (e) {
@@ -153,10 +154,10 @@ class SaveService {
     }
   }
 
-  Future<void> _insertTask(ProposalData d, String transcript, String captureId) {
+  Future<void> _insertTask(ProposalData d, String transcript, String captureId) async {
     // Date-only deadline: noon keeps the same calendar day in any timezone.
     final due = d.date == null ? null : DateTime(d.date!.year, d.date!.month, d.date!.day, 12);
-    return _db.from('tasks').insert({
+    final inserted = await _db.from('tasks').insert({
       'user_id': _uid,
       'title': d.title.trim(),
       'due_at': due == null ? null : isoWithOffset(due),
@@ -164,7 +165,28 @@ class SaveService {
       'related_people': d.people,
       'source_transcript': transcript,
       'capture_id': captureId,
-    });
+    }).select('id').single();
+
+    final taskId = inserted['id'] as String;
+
+    // Sync to the user's own Google Tasks
+    try {
+      final googleTaskId = await GoogleTasksService().createTask(
+        title: d.title.trim(),
+        notes: d.people.isNotEmpty ? 'With: ${d.people.join(', ')}' : null,
+        dueDate: d.date,
+      );
+
+      if (googleTaskId != null) {
+        await _db.from('tasks').update({
+          'google_task_id': googleTaskId,
+          'synced_at': DateTime.now().toUtc().toIso8601String(),
+        }).eq('id', taskId);
+      }
+    } catch (e) {
+      debugPrint('[SaveService] Google Tasks sync failed: $e');
+      // Don't block the save — Supabase already has the task
+    }
   }
 
   Future<void> _insertEmail(ProposalData d, String transcript, String captureId) async {
