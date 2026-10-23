@@ -51,7 +51,7 @@ The speaker may mix Algerian Darija, French and English in the same sentence.
 Do not translate. Do not summarize. Keep each word in the language it was spoken in.
 Return only the transcript."""
 
-MODELS = ["gemini-flash-latest", "gemini-3.7-flash", "gemini-3.5-flash", "gemini-3.8-flash"]
+MODELS = ["gemini-3.5-flash", "gemini-3.7-flash", "gemini-3.8-flash", "gemini-flash-latest"]
 
 
 def parse_audio(path: str, current_datetime: str = "", timezone: str = "Africa/Algiers") -> dict:
